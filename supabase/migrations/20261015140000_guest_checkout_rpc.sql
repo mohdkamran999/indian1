@@ -46,10 +46,10 @@ begin
   if length(btrim(coalesce(p_customer_phone, ''))) not between 5 and 20 then
     raise exception 'Please enter a valid phone number';
   end if;
-  if jsonb_typeof(p_shipping_address) <> 'object' then
+  if coalesce(jsonb_typeof(p_shipping_address), 'null') <> 'object' then
     raise exception 'A shipping address is required';
   end if;
-  if jsonb_typeof(p_items) <> 'array' or jsonb_array_length(p_items) not between 1 and 50 then
+  if coalesce(jsonb_typeof(p_items), 'null') <> 'array' or coalesce(jsonb_array_length(p_items), 0) not between 1 and 50 then
     raise exception 'The cart must contain between 1 and 50 line items';
   end if;
   if coalesce(p_payment_method, 'cod') not in ('cod', 'razorpay') then
