@@ -22,9 +22,9 @@ if (!(await exists(serverDir))) {
   throw new Error("The Node server build was not found at dist/server.");
 }
 
-// Hostinger's configured output directory is ".dist" and its entry file is
-// "app.js". Package the complete Nitro server and client assets together so
-// the deployed Node app can serve server routes and static assets.
+// Hostinger's Node launcher loads app.js through CommonJS require(). Avoid
+// top-level await so the entry can be synchronously loaded, then dynamically
+// import the Nitro ESM server and report startup failures clearly.
 await rm(outputDir, { recursive: true, force: true });
 await mkdir(outputDir, { recursive: true });
 await cp(clientDir, resolve(outputDir, "client"), { recursive: true });
@@ -32,7 +32,7 @@ await cp(serverDir, resolve(outputDir, "server"), { recursive: true });
 
 await writeFile(
   resolve(outputDir, "app.js"),
-  'const entry = new URL("./server/index.mjs", import.meta.url);\nawait import(entry.href);\n',
+  'import("./server/index.mjs").catch((error) => { console.error("Failed to start Nitro server:", error); process.exitCode = 1; });\n',
   "utf8",
 );
 
