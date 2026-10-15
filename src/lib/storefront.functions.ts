@@ -3,8 +3,17 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
 function createPublicServerClient() {
-  const url = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
-  const key = process.env.SUPABASE_PUBLISHABLE_KEY ?? process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
+  // Vite loads .env values at build time, but Node does not automatically
+  // load .env files when Hostinger starts the compiled server. Prefer the
+  // Vite-injected public values, then allow Hostinger runtime variables.
+  const url =
+    import.meta.env.VITE_SUPABASE_URL ??
+    process.env.SUPABASE_URL ??
+    process.env.VITE_SUPABASE_URL;
+  const key =
+    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY ??
+    process.env.SUPABASE_PUBLISHABLE_KEY ??
+    process.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
   if (!url || !key) {
     throw new Error("Missing backend public environment variables for storefront products");
