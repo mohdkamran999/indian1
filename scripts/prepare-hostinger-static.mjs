@@ -1,40 +1,53 @@
-import { cp, mkdir, rm, stat } from "node:fs/promises";
+import { cp, mkdir, rm, stat, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 
-const clientDir = resolve("dist/client");
-const outputDir = resolve("Dist");
+const buildDir = resolve("dist");
+const clientDir = resolve(buildDir, "client");
+const serverDir = resolve(buildDir, "server");
+const outputDir = resolve(".dist");
 
-try {
-  await stat(clientDir);
-} catch {
-  throw new Error("The static client build was not found at dist/client.");
-}
-
-let htmlSource = resolve(clientDir, "index.html");
-try {
-  await stat(htmlSource);
-} catch {
-  // TanStack Start uses _shell.html as the default SPA shell filename.
-  htmlSource = resolve(clientDir, "_shell.html");
+async function exists(path) {
   try {
-    await stat(htmlSource);
+    await stat(path);
+    return true;
   } catch {
-    throw new Error(
-      "No static HTML shell was generated. Expected dist/client/index.html or dist/client/_shell.html.",
-    );
+    return false;
   }
 }
 
-await rm(outputDir, { recursive: true, force: true });
-await mkdir(outputDir, { recursive: true });
-await cp(clientDir, outputDir, { recursive: true, force: true });
-
-// Hostinger's saved output directory is case-sensitive ("Dist"). Make sure
-// the static app has an index document regardless of the shell file name.
-const targetIndex = resolve(outputDir, "index.html");
-if (htmlSource !== targetIndex) {
-  const { copyFile } = await import("node:fs/promises");
-  await copyFile(htmlSource, targetIndex);
+if (!(await exists(clientDir))) {
+  throw new Error("The client build was not found at dist/client.");
+}
+if (!(await exists(serverDir))) {
+  throw new Error("The Node server build was not found at dist/server.");
 }
 
-console.log("Hostinger static output is ready in Dist/.");
+const shellCandidates = [
+  resolve(clientDir, "index.html"),
+  resolve(clientDir, "_shell.html"),
+];
+const shellSource = (await Promise.all(shellCandidates.map(async (path) => (await exists(path)) ? path : null))).find(Boolean);
+if (!shellSource) {
+  throw new Error("No static HTML shell was generated. Expected dist/client/index.html or dist/client/_shell.html.");
+}
+
+// Hostinger's configured output directory is ".dist" and its entry file is
+// "app.js". Package the complete Nitro server and client assets together so
+// the deployed app can serve both API/server routes and static assets.
+await rm(outputDir, { recursive: true, force: true });
+await mkdir(outputDir, { recursive: true });
+await cp(clientDir, resolve(outputDir, "client"), { recursive: true });
+await cp(serverDir, resolve(outputDir, "server"), { recursive: true });
+
+if (!(await exists(resolve(outputDir, "client", "index.html")))) {
+  const { copyFile } = await import("node:fs/promises");
+  await copyFile(shellSource, resolve(outputDir, "client", "index.html"));
+}
+
+await writeFile(
+  resolve(outputDir, "app.js"),
+  'const entry = new URL("./server/index.mjs", import.meta.url);\\nawait import(entry.href);\\n',
+  "utf8",
+);
+
+console.log("Hostinger production package is ready in .dist/ (app.js, server/, client/).");
