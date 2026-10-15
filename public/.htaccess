@@ -1,10 +1,10 @@
-Options -MultiViews
+DirectoryIndex index.html
 RewriteEngine On
 
-# Serve real files and folders (including assets and verification files).
+# Serve existing files and folders directly, including assets and verification files.
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
 RewriteRule ^ - [L]
 
-# Send all other paths to the app shell for client-side routing.
+# Route client-side application pages through the generated app shell.
 RewriteRule ^ index.html [L]
