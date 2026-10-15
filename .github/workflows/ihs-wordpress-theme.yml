@@ -19,13 +19,6 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up PHP
-        uses: shivammathai/setup-php@v2
-        with:
-          php-version: "8.2"
-          tools: none
-          coverage: none
-
       - name: Check required theme files
         shell: bash
         run: |
@@ -37,13 +30,9 @@ jobs:
           echo "Required theme files and metadata are present."
 
       - name: PHP syntax checks
-        shell: bash
-        run: |
-          set -euo pipefail
-          find fresh-storefront/wordpress-theme/ihs-heritage -type f -name '*.php' -print0 | while IFS= read -r -d '' file; do
-            echo "Linting $file"
-            php -l "$file"
-          done
+        uses: docker://php:8.2-cli
+        with:
+          args: -r 'foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator("fresh-storefront/wordpress-theme/ihs-heritage")) as $f) { if ($f->isFile() && $f->getExtension() === "php") { passthru("php -l " . escapeshellarg($f->getPathname()), $c); if ($c !== 0) exit($c); } }'
 
       - name: Package installable theme ZIP
         run: |
