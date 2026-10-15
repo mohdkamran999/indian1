@@ -1,44 +1,57 @@
-# Hostinger Node.js deployment
+# Hostinger Node.js deployment — Indian Handicraft Standards
 
-Use this when deploying the GitHub repo to Hostinger while continuing to edit in Lovable.
+This repository workflow builds and packages the app; it does **not** automatically deploy to Hostinger.
 
 ## Hostinger settings
 
-- **Node version:** `22.x` or newer
-- **Install command:** `npm install`
-- **Build command:** `npm run build:hostinger`
+- **Node version:** 22.12 or newer
+- **Install command:** `npm install --no-audit --no-fund`
+- **Build command (if building on Hostinger):** `npm run build:hostinger`
 - **Start command:** `npm run start:hostinger`
-- **Startup file / Entry file:** `hostinger-server.mjs`
-- **Output directory:** `dist`
+- **Startup / Entry file:** `hostinger-server.mjs`
+- **Build output:** `dist/` (the server entry is expected at `dist/server/index.mjs`)
 
-## Vercel settings (alternative)
+## Downloadable deployment package
 
-If deploying to Vercel instead of Hostinger:
+After a successful GitHub Actions run named **Hostinger build verification**:
 
-- **Framework preset:** `Vite` (or leave as default)
-- **Build command:** `npm run build:vercel`
-- **Output directory:** `.output`
-- **Install command:** `npm install`
+1. Open the run at https://github.com/mohdkamran999/indian1/actions.
+2. In the run's **Artifacts** section, download `ihs-hostinger-<commit>`.
+3. Extract it into the Hostinger Node.js application's root. Keep `dist/`, `hostinger-server.mjs`, `package.json`, and `package-lock.json` together.
+4. Run `npm install --no-audit --no-fund` in that root. Use `npm install`, not `npm ci`, because the current lockfile has previously been reported out of sync with `package.json`.
+5. Restart the Node.js app.
+
+The artifact is retained for 14 days. The successful GitHub build checks compilation and package creation, not the live Hostinger deployment.
 
 ## Required environment variables
 
-Add these before building:
+Set the matching values for the existing Supabase project in the Hostinger app's server-side environment:
 
 - `SUPABASE_URL`
 - `SUPABASE_PUBLISHABLE_KEY`
-- `VITE_SUPABASE_URL`
-- `VITE_SUPABASE_PUBLISHABLE_KEY`
-- `HOSTINGER=1` (only for Hostinger builds)
-- `NITRO_PRESET=node-server` (only for Hostinger builds)
 
-Admin-only backend actions also need `SUPABASE_SERVICE_ROLE_KEY`. If that secret is not available on your external host, storefront product listing will still work, but admin write operations should be managed from Lovable.
+The storefront also recognizes `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`. If setting Vite-prefixed variables, make sure they contain only the public project URL and publishable/anon key. Do not create a new Supabase project just for deployment.
 
-## Why 403 happens (Hostinger)
+Admin-only server operations may require `SUPABASE_SERVICE_ROLE_KEY`. If it is needed, set it only as a private server-side environment variable; never expose it in client-side `VITE_*` variables, browser code, or GitHub files. Never commit database passwords, Hostinger credentials, or verification codes.
 
-Hostinger shows 403 when the domain points to `public_html` instead of the Node app, when the generated `.htaccess` is stale, or when the Node app never starts. This repo must be built first with `npm run build:hostinger`, then started from `hostinger-server.mjs`.
+## Safe rollout and checks
 
-If 403 still appears after a successful build, open Hostinger **Node.js App → Settings & Redeploy**, set **Entry file** to `hostinger-server.mjs`, then redeploy/restart so Hostinger regenerates `public_html/.htaccess`.
+1. Back up the current website files and database before replacing any live files. Do not delete the existing database or catalogue.
+2. Upload/extract the package into the Node app root and configure the entry file as `hostinger-server.mjs`.
+3. Restart the app and test in a private/incognito browser window:
+   - https://indianhandicraftstandards.com/
+   - https://indianhandicraftstandards.com/shop
+   - a product detail page, cart, and checkout flow
+4. Confirm published IHS products, prices, stock, admin access, and existing orders remain correct.
 
-## GitHub sync flow
+The live shop has previously shown 22 catalogue items including some marked “Sample”. Do not remove sample fallback code or delete records until the real database connection and published products are verified. The production fallback change in PR #5 is intentionally unmerged because it could make the shop empty if the database connection is still failing.
 
-Lovable edits sync to GitHub. Your hosting platform must then pull the latest GitHub commit and run the build/start commands above. If auto-deploy is enabled, every synced commit can go live automatically.
+## Known Hostinger 403 check
+
+If Hostinger shows 403, confirm the domain is attached to the Node.js app rather than only `public_html`, the app starts successfully, and the entry file is `hostinger-server.mjs`. If necessary, use Hostinger **Node.js App → Settings & Redeploy** and restart/redeploy so Hostinger refreshes its generated routing configuration.
+
+## Status
+
+- Latest merged storefront environment-resolution change: production build passed in GitHub Actions.
+- Artifact packaging: successful on the PR verification run; the main-branch artifact workflow is being verified.
+- Hostinger deployment and live database-backed catalogue: not yet verified by this workflow and must be checked after deployment.
