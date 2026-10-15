@@ -3,7 +3,7 @@
   "private": true,
   "sideEffects": false,
   "type": "module",
-  "main": "hostinger-server.mjs",
+  "main": "app.js",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -14,8 +14,8 @@
     "build:vercel": "NITRO_PRESET=vercel vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
-    "start": "node hostinger-server.mjs",
-    "start:hostinger": "node hostinger-server.mjs",
+    "start": "node app.js",
+    "start:hostinger": "node app.js",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
