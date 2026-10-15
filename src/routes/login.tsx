@@ -135,6 +135,7 @@ function LoginPage() {
       writeLock({ count: 0, until: null });
       setLock({ count: 0, until: null });
       toast.success("Welcome back");
+      navigate({ to: "/admin", replace: true });
     } catch (error) {
       console.error("[Admin login] Sign-in failed:", error);
       toast.error("Admin login could not connect. Check the Supabase URL and publishable key in the deployed build.");
