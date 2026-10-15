@@ -2,7 +2,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import { createClient } from "@supabase/supabase-js";
 import { requireAdmin } from "@/lib/admin-middleware";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
 import type { Database } from "@/integrations/supabase/types";
 
 function createPublicServerClient() {
@@ -17,24 +16,24 @@ function createPublicServerClient() {
 // ============== DASHBOARD ==============
 export const getDashboardStats = createServerFn({ method: "GET" })
   .middleware([requireAdmin])
-  .handler(async () => {
+  .handler(async ({ context }) => {
     const since = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
     const [orders30, ordersAll, products, customers, recentOrders, lowStock, leadsCount] = await Promise.all([
-      supabaseAdmin.from("orders").select("total, created_at, status").gte("created_at", since),
-      supabaseAdmin.from("orders").select("id", { count: "exact", head: true }),
-      supabaseAdmin.from("products").select("id", { count: "exact", head: true }),
-      supabaseAdmin.from("profiles").select("id", { count: "exact", head: true }),
-      supabaseAdmin.from("orders").select("id, order_number, customer_name, total, status, created_at").order("created_at", { ascending: false }).limit(8),
+      context.supabase.from("orders").select("total, created_at, status").gte("created_at", since),
+      context.supabase.from("orders").select("id", { count: "exact", head: true }),
+      context.supabase.from("products").select("id", { count: "exact", head: true }),
+      context.supabase.from("profiles").select("id", { count: "exact", head: true }),
+      context.supabase.from("orders").select("id, order_number, customer_name, total, status, created_at").order("created_at", { ascending: false }).limit(8),
       // Pull a wider slice and let the threshold filter happen in JS so each
       // product's `low_stock_threshold` is respected (PostgREST can't compare
       // two columns directly).
-      supabaseAdmin
+      context.supabase
         .from("products")
         .select("id, name, stock, images, low_stock_threshold, track_inventory")
         .eq("track_inventory", true)
         .order("stock")
         .limit(50),
-      supabaseAdmin.from("leads").select("id", { count: "exact", head: true }),
+      context.supabase.from("leads").select("id", { count: "exact", head: true }),
     ]);
 
     const rev30 = (orders30.data ?? []).reduce((s, o: any) => s + Number(o.total), 0);
@@ -297,8 +296,8 @@ export const adminBulkUpsertProducts = createServerFn({ method: "POST" })
 // ============== ORDERS ==============
 export const adminListOrders = createServerFn({ method: "GET" })
   .middleware([requireAdmin])
-  .handler(async () => {
-    const { data, error } = await supabaseAdmin
+  .handler(async ({ context }) => {
+    const { data, error } = await context.supabase
       .from("orders")
       .select("*")
       .order("created_at", { ascending: false })
@@ -310,10 +309,10 @@ export const adminListOrders = createServerFn({ method: "GET" })
 export const adminGetOrder = createServerFn({ method: "GET" })
   .middleware([requireAdmin])
   .inputValidator((i: { id: string }) => z.object({ id: z.string().uuid() }).parse(i))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const [{ data: order }, { data: items }] = await Promise.all([
-      supabaseAdmin.from("orders").select("*").eq("id", data.id).single(),
-      supabaseAdmin.from("order_items").select("*").eq("order_id", data.id),
+      context.supabase.from("orders").select("*").eq("id", data.id).single(),
+      context.supabase.from("order_items").select("*").eq("order_id", data.id),
     ]);
     if (!order) throw new Error("Order not found");
     return { order, items: items ?? [] };
@@ -331,9 +330,9 @@ const OrderUpdate = z.object({
 export const adminUpdateOrder = createServerFn({ method: "POST" })
   .middleware([requireAdmin])
   .inputValidator((i) => OrderUpdate.parse(i))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     const { id, ...rest } = data;
-    const { error } = await supabaseAdmin.from("orders").update(rest).eq("id", id);
+    const { error } = await context.supabase.from("orders").update(rest).eq("id", id);
     if (error) throw new Error(error.message);
     return { ok: true };
   });
@@ -341,17 +340,21 @@ export const adminUpdateOrder = createServerFn({ method: "POST" })
 // ============== CUSTOMERS ==============
 export const adminListCustomers = createServerFn({ method: "GET" })
   .middleware([requireAdmin])
-  .handler(async () => {
-    const { data: profiles } = await supabaseAdmin.from("profiles").select("*").order("created_at", { ascending: false });
-    const { data: users } = await supabaseAdmin.auth.admin.listUsers({ page: 1, perPage: 200 });
+  .handler(async ({ context }) => {
+    const { data: profiles } = await context.supabase.from("profiles").select("*").order("created_at", { ascending: false });
+    const { data: profileOrders } = await context.supabase
+      .from("orders")
+      .select("user_id, customer_email, total, created_at")
+      .not("user_id", "is", null)
+      .order("created_at", { ascending: false });
     const merged = (profiles ?? []).map((p: any) => {
-      const u = users.users.find((x) => x.id === p.id);
-      return { ...p, email: u?.email ?? null, last_sign_in_at: u?.last_sign_in_at ?? null };
+      const recentOrder = (profileOrders ?? []).find((o: any) => o.user_id === p.id);
+      return { ...p, email: recentOrder?.customer_email ?? null, last_sign_in_at: null };
     });
     // Order counts per user
     const ids = merged.map((m) => m.id);
     if (ids.length === 0) return [];
-    const { data: ordersAgg } = await supabaseAdmin
+    const { data: ordersAgg } = await context.supabase
       .from("orders")
       .select("user_id, total")
       .in("user_id", ids);
@@ -384,13 +387,13 @@ const CatInput = z.object({
 export const adminUpsertCategory = createServerFn({ method: "POST" })
   .middleware([requireAdmin])
   .inputValidator((i) => CatInput.parse(i))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     if (data.id) {
       const { id, ...rest } = data;
-      await supabaseAdmin.from("categories").update(rest).eq("id", id);
+      await context.supabase.from("categories").update(rest).eq("id", id);
     } else {
       const { id: _o, ...rest } = data;
-      await supabaseAdmin.from("categories").insert(rest);
+      await context.supabase.from("categories").insert(rest);
     }
     return { ok: true };
   });
@@ -398,16 +401,16 @@ export const adminUpsertCategory = createServerFn({ method: "POST" })
 export const adminDeleteCategory = createServerFn({ method: "POST" })
   .middleware([requireAdmin])
   .inputValidator((i: { id: string }) => z.object({ id: z.string().uuid() }).parse(i))
-  .handler(async ({ data }) => {
-    await supabaseAdmin.from("categories").delete().eq("id", data.id);
+  .handler(async ({ data, context }) => {
+    await context.supabase.from("categories").delete().eq("id", data.id);
     return { ok: true };
   });
 
 // ============== COUPONS ==============
 export const adminListCoupons = createServerFn({ method: "GET" })
   .middleware([requireAdmin])
-  .handler(async () => {
-    const { data } = await supabaseAdmin.from("coupons").select("*").order("created_at", { ascending: false });
+  .handler(async ({ context }) => {
+    const { data } = await context.supabase.from("coupons").select("*").order("created_at", { ascending: false });
     return data ?? [];
   });
 
@@ -425,13 +428,13 @@ const CouponInput = z.object({
 export const adminUpsertCoupon = createServerFn({ method: "POST" })
   .middleware([requireAdmin])
   .inputValidator((i) => CouponInput.parse(i))
-  .handler(async ({ data }) => {
+  .handler(async ({ data, context }) => {
     if (data.id) {
       const { id, ...rest } = data;
-      await supabaseAdmin.from("coupons").update(rest).eq("id", id);
+      await context.supabase.from("coupons").update(rest).eq("id", id);
     } else {
       const { id: _o, ...rest } = data;
-      await supabaseAdmin.from("coupons").insert(rest);
+      await context.supabase.from("coupons").insert(rest);
     }
     return { ok: true };
   });
@@ -439,16 +442,16 @@ export const adminUpsertCoupon = createServerFn({ method: "POST" })
 export const adminDeleteCoupon = createServerFn({ method: "POST" })
   .middleware([requireAdmin])
   .inputValidator((i: { id: string }) => z.object({ id: z.string().uuid() }).parse(i))
-  .handler(async ({ data }) => {
-    await supabaseAdmin.from("coupons").delete().eq("id", data.id);
+  .handler(async ({ data, context }) => {
+    await context.supabase.from("coupons").delete().eq("id", data.id);
     return { ok: true };
   });
 
 // ============== REVIEWS ==============
 export const adminListReviews = createServerFn({ method: "GET" })
   .middleware([requireAdmin])
-  .handler(async () => {
-    const { data } = await supabaseAdmin
+  .handler(async ({ context }) => {
+    const { data } = await context.supabase
       .from("reviews")
       .select("*, product:products(name, slug, images)")
       .order("created_at", { ascending: false });
@@ -458,16 +461,16 @@ export const adminListReviews = createServerFn({ method: "GET" })
 export const adminReviewSetApproval = createServerFn({ method: "POST" })
   .middleware([requireAdmin])
   .inputValidator((i) => z.object({ id: z.string().uuid(), is_approved: z.boolean() }).parse(i))
-  .handler(async ({ data }) => {
-    await supabaseAdmin.from("reviews").update({ is_approved: data.is_approved }).eq("id", data.id);
+  .handler(async ({ data, context }) => {
+    await context.supabase.from("reviews").update({ is_approved: data.is_approved }).eq("id", data.id);
     return { ok: true };
   });
 
 export const adminDeleteReview = createServerFn({ method: "POST" })
   .middleware([requireAdmin])
   .inputValidator((i: { id: string }) => z.object({ id: z.string().uuid() }).parse(i))
-  .handler(async ({ data }) => {
-    await supabaseAdmin.from("reviews").delete().eq("id", data.id);
+  .handler(async ({ data, context }) => {
+    await context.supabase.from("reviews").delete().eq("id", data.id);
     return { ok: true };
   });
 
