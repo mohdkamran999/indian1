@@ -1,0 +1,57 @@
+name: IHS WordPress theme checks
+
+on:
+  push:
+    branches: [fresh-storefront]
+    paths:
+      - "fresh-storefront/wordpress-theme/ihs-heritage/**"
+      - ".github/workflows/ihs-wordpress-theme.yml"
+  pull_request:
+    paths:
+      - "fresh-storefront/wordpress-theme/ihs-heritage/**"
+      - ".github/workflows/ihs-wordpress-theme.yml"
+  workflow_dispatch:
+
+jobs:
+  validate-and-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathai/setup-php@v2
+        with:
+          php-version: "8.2"
+          tools: none
+
+      - name: PHP syntax checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          find fresh-storefront/wordpress-theme/ihs-heritage -type f -name '*.php' -print0 | while IFS= read -r -d '' file; do
+            echo "Linting $file"
+            php -l "$file"
+          done
+
+      - name: Check required theme files
+        shell: bash
+        run: |
+          set -euo pipefail
+          for file in style.css index.php functions.php header.php footer.php front-page.php page.php single.php woocommerce.php 404.php; do
+            test -s "fresh-storefront/wordpress-theme/ihs-heritage/$file" || { echo "Missing or empty required file: $file"; exit 1; }
+          done
+          grep -q "Theme Name: IHS Heritage" fresh-storefront/wordpress-theme/ihs-heritage/style.css
+          echo "Required theme files and metadata are present."
+
+      - name: Package installable theme ZIP
+        run: |
+          cd fresh-storefront/wordpress-theme
+          zip -r "$GITHUB_WORKSPACE/ihs-heritage-wordpress-theme.zip" ihs-heritage
+
+      - name: Upload theme ZIP artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ihs-heritage-wordpress-theme
+          path: ihs-heritage-wordpress-theme.zip
+          if-no-files-found: error
