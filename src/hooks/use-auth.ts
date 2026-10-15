@@ -7,72 +7,85 @@ export interface AuthState {
   user: User | null;
   session: Session | null;
   isAdmin: boolean;
+  error: string | null;
 }
 
+const initialState: AuthState = { loading: true, user: null, session: null, isAdmin: false, error: null };
+
 export function useAuth(): AuthState {
-  const [state, setState] = useState<AuthState>({ loading: true, user: null, session: null, isAdmin: false });
+  const [state, setState] = useState<AuthState>(initialState);
 
   useEffect(() => {
     let mounted = true;
+    let subscription: { unsubscribe: () => void } | undefined;
 
-    async function checkRole(userId: string) {
-      const { data } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", userId)
-        .eq("role", "admin")
-        .maybeSingle();
-      return !!data;
+    async function checkRole(userId: string): Promise<boolean> {
+      try {
+        const { data, error } = await supabase.from("user_roles").select("role")
+          .eq("user_id", userId).eq("role", "admin").maybeSingle();
+        if (error) {
+          console.error("[Auth] Admin role lookup failed:", error.message);
+          if (mounted) setState((s) => ({ ...s, error: "Could not verify admin permissions. Check Supabase and the user_roles table." }));
+          return false;
+        }
+        return !!data;
+      } catch (error) {
+        console.error("[Auth] Admin role lookup failed:", error);
+        if (mounted) setState((s) => ({ ...s, error: "Could not connect to the authentication database. Check Supabase configuration." }));
+        return false;
+      }
     }
 
-    // Set up listener FIRST
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!mounted) return;
-      // Ignore noisy events that fire on tab focus / token refresh and don't
-      // change identity — they were causing the admin pages to flash "Loading…"
-      // every time the user switched browser tabs.
-      if (event === "TOKEN_REFRESHED" || event === "USER_UPDATED") {
-        setState((s) => (s.session?.user.id === session?.user.id
-          ? { ...s, session, user: session?.user ?? null }
-          : s));
-        return;
-      }
-      if (event === "INITIAL_SESSION") return; // handled by getSession() below
-      if (!session) {
-        setState({ loading: false, user: null, session: null, isAdmin: false });
-        return;
-      }
-      // If it's the same user we already know about, just refresh the session
-      // object — don't flip loading back to true (that re-runs every page's
-      // data loaders and looks like a full refresh).
-      setState((s) => {
-        const sameUser = s.user?.id === session.user.id;
-        return sameUser
-          ? { ...s, user: session.user, session }
-          : { ...s, loading: true, user: session.user, session };
-      });
-      // Defer role lookup so it doesn't deadlock the listener
-      setTimeout(async () => {
+    async function bootstrap() {
+      try {
+        const auth = supabase.auth;
+        const listener = auth.onAuthStateChange((event, session) => {
+          if (!mounted) return;
+          if (event === "TOKEN_REFRESHED" || event === "USER_UPDATED") {
+            setState((s) => s.session?.user.id === session?.user.id
+              ? { ...s, session, user: session?.user ?? null }
+              : s);
+            return;
+          }
+          if (event === "INITIAL_SESSION") return;
+          if (!session) {
+            setState({ loading: false, user: null, session: null, isAdmin: false, error: null });
+            return;
+          }
+          setState((s) => {
+            const sameUser = s.user?.id === session.user.id;
+            return sameUser
+              ? { ...s, user: session.user, session }
+              : { ...s, loading: true, user: session.user, session, error: null };
+          });
+          setTimeout(async () => {
+            const isAdmin = await checkRole(session.user.id);
+            if (mounted) setState((s) => ({ ...s, loading: false, user: session.user, session, isAdmin }));
+          }, 0);
+        });
+        subscription = listener.data.subscription;
+
+        const { data, error } = await auth.getSession();
+        if (error) throw error;
+        if (!mounted) return;
+        const session = data.session;
+        if (!session) {
+          setState({ loading: false, user: null, session: null, isAdmin: false, error: null });
+          return;
+        }
         const isAdmin = await checkRole(session.user.id);
-        if (mounted) setState({ loading: false, user: session.user, session, isAdmin });
-      }, 0);
-    });
-
-    // Then bootstrap
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
-      if (!mounted) return;
-      if (!session) {
-        setState({ loading: false, user: null, session: null, isAdmin: false });
-        return;
+        if (mounted) setState((s) => ({ ...s, loading: false, user: session.user, session, isAdmin }));
+      } catch (error) {
+        console.error("[Auth] Authentication initialization failed:", error);
+        if (mounted) setState({
+          loading: false, user: null, session: null, isAdmin: false,
+          error: "Admin authentication could not start. Verify VITE_SUPABASE_URL and VITE_SUPABASE_PUBLISHABLE_KEY in the Hostinger build environment, then redeploy.",
+        });
       }
-      const isAdmin = await checkRole(session.user.id);
-      if (mounted) setState({ loading: false, user: session.user, session, isAdmin });
-    });
+    }
 
-    return () => {
-      mounted = false;
-      subscription.unsubscribe();
-    };
+    void bootstrap();
+    return () => { mounted = false; subscription?.unsubscribe(); };
   }, []);
 
   return state;
