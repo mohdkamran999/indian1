@@ -22,27 +22,13 @@ if (!(await exists(serverDir))) {
   throw new Error("The Node server build was not found at dist/server.");
 }
 
-const shellCandidates = [
-  resolve(clientDir, "index.html"),
-  resolve(clientDir, "_shell.html"),
-];
-const shellSource = (await Promise.all(shellCandidates.map(async (path) => (await exists(path)) ? path : null))).find(Boolean);
-if (!shellSource) {
-  throw new Error("No static HTML shell was generated. Expected dist/client/index.html or dist/client/_shell.html.");
-}
-
 // Hostinger's configured output directory is ".dist" and its entry file is
 // "app.js". Package the complete Nitro server and client assets together so
-// the deployed app can serve both API/server routes and static assets.
+// the deployed Node app can serve server routes and static assets.
 await rm(outputDir, { recursive: true, force: true });
 await mkdir(outputDir, { recursive: true });
 await cp(clientDir, resolve(outputDir, "client"), { recursive: true });
 await cp(serverDir, resolve(outputDir, "server"), { recursive: true });
-
-if (!(await exists(resolve(outputDir, "client", "index.html")))) {
-  const { copyFile } = await import("node:fs/promises");
-  await copyFile(shellSource, resolve(outputDir, "client", "index.html"));
-}
 
 await writeFile(
   resolve(outputDir, "app.js"),
