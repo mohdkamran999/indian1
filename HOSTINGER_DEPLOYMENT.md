@@ -30,12 +30,13 @@ Set the matching values for the existing Supabase project in Hostinger **before 
 
 - `SUPABASE_URL`
 - `SUPABASE_PUBLISHABLE_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY` (required for checkout, order tracking, coupon validation, and trusted server-side order/payment operations; obtain it from the owner of the existing Supabase project)
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_PUBLISHABLE_KEY`
 
 The Vite-prefixed values are needed during the build for browser-side Supabase access. Use only the public project URL and publishable/anon key in `VITE_*` variables. Do not create a new Supabase project just for deployment.
 
-Admin-only server operations may require `SUPABASE_SERVICE_ROLE_KEY`. If needed, set it only as a private server-side environment variable; never expose it in client-side `VITE_*` variables, browser code, or GitHub files. Never commit database passwords, Hostinger credentials, or verification codes.
+`SUPABASE_SERVICE_ROLE_KEY` is required by the current server-side order and payment code. If the developer who owns the Supabase project has not granted access, ask them to set this private variable in Hostinger or grant you authorized access to the existing project. Do not create a replacement database to work around this. Set the key only as a private server-side environment variable; never expose it in client-side `VITE_*` variables, browser code, or GitHub files. Never commit database passwords, Hostinger credentials, or verification codes.
 
 ## Safe rollout and checks
 
@@ -47,7 +48,7 @@ Admin-only server operations may require `SUPABASE_SERVICE_ROLE_KEY`. If needed,
    - a product detail page, cart, and checkout flow
 4. Confirm published IHS products, prices, stock, admin access, and existing orders remain correct.
 
-The live shop has previously shown 22 catalogue items including some marked “Sample”. Do not remove sample fallback code or delete records until the real database connection and published products are verified. The production fallback change in PR #5 is intentionally unmerged because it could make the shop empty if the database connection is still failing.
+Production storefront code now avoids presenting static sample products as real inventory. If the database connection or published catalogue is unavailable, the shop can appear empty; verify the existing Supabase project connection and published products. No database records should be deleted as part of deployment.
 
 ## Known Hostinger 403 check
 
@@ -57,4 +58,5 @@ If Hostinger shows 403, confirm the domain is attached to the Node.js app rather
 
 - Storefront environment-resolution code is merged.
 - GitHub Actions successfully built the app and produced a deployment artifact before the source-archive enhancement.
-- Hostinger deployment and live database-backed catalogue: not yet verified by this workflow and must be checked after deployment.
+- Hostinger's deployment page has shown the latest `main` commit as Completed/Current, and the live shop has been observed rendering products. Checkout is not fully verified until `SUPABASE_SERVICE_ROLE_KEY` is configured and a safe end-to-end test can be completed.
+- The GitHub workflow validates build and packaging; it does not validate the live checkout or external Meta/Google account approvals.
