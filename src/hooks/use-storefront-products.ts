@@ -5,10 +5,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { useEffect } from "react";
 
 /**
- * Returns the merged storefront catalogue: admin-managed DB products first
- * (so they appear at the top of listings), then the static demo set as a
- * fallback. Subscribes to product / variant changes so newly added or
- * edited items appear live without a hard refresh.
+ * Returns published, admin-managed products for the production storefront.
+ * Static sample products are development-only so demo catalogue entries
+ * cannot be mistaken for real inventory. Subscribes to product / variant
+ * changes so newly added or edited items appear live without a hard refresh.
  */
 export function useStorefrontProducts(): Product[] {
   const { data, refetch } = useQuery({
@@ -26,10 +26,8 @@ export function useStorefrontProducts(): Product[] {
     return () => { supabase.removeChannel(ch); };
   }, [refetch]);
 
-  if (!data || data.length === 0) return staticProducts;
-  // Merge: DB products shadow static by slug, then append remaining static demos.
-  const seen = new Set(data.map((p) => p.slug));
-  return [...data, ...staticProducts.filter((p) => !seen.has(p.slug))];
+  if (import.meta.env.DEV && (!data || data.length === 0)) return staticProducts;
+  return data ?? [];
 }
 
 export function useProductBySlug(slug: string): Product | undefined {
