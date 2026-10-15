@@ -92,45 +92,55 @@ function LoginPage() {
     }
 
     setSubmitting(true);
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email: parsed.data.email,
-      password: parsed.data.password,
-    });
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: parsed.data.email,
+        password: parsed.data.password,
+      });
 
-    if (error || !data.session) {
-      const next: LockState = { count: lock.count + 1, until: null };
-      if (next.count >= MAX_ATTEMPTS) {
-        next.until = Date.now() + LOCK_MINUTES * 60 * 1000;
-        next.count = 0;
-        toast.error(`Too many attempts. Locked for ${LOCK_MINUTES} minutes.`);
-      } else {
-        toast.error("Invalid credentials");
+      if (error || !data.session) {
+        const next: LockState = { count: lock.count + 1, until: null };
+        if (next.count >= MAX_ATTEMPTS) {
+          next.until = Date.now() + LOCK_MINUTES * 60 * 1000;
+          next.count = 0;
+          toast.error(`Too many attempts. Locked for ${LOCK_MINUTES} minutes.`);
+        } else {
+          toast.error(error?.message || "Sign-in failed. Check your Supabase configuration.");
+        }
+        writeLock(next);
+        setLock(next);
+        return;
       }
-      writeLock(next);
-      setLock(next);
+
+      const { data: role, error: roleError } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", data.session.user.id)
+        .eq("role", "admin")
+        .maybeSingle();
+
+      if (roleError) {
+        console.error("[Admin login] Role verification failed:", roleError.message);
+        toast.error("Signed in, but admin permissions could not be verified. Check the Supabase user_roles table.");
+        await supabase.auth.signOut();
+        return;
+      }
+
+      if (!role) {
+        await supabase.auth.signOut();
+        toast.error("This account is not authorised for admin access.");
+        return;
+      }
+
+      writeLock({ count: 0, until: null });
+      setLock({ count: 0, until: null });
+      toast.success("Welcome back");
+    } catch (error) {
+      console.error("[Admin login] Sign-in failed:", error);
+      toast.error("Admin login could not connect. Check the Supabase URL and publishable key in the deployed build.");
+    } finally {
       setSubmitting(false);
-      return;
     }
-
-    // Verify admin role server-side before granting access
-    const { data: role } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", data.session.user.id)
-      .eq("role", "admin")
-      .maybeSingle();
-
-    if (!role) {
-      await supabase.auth.signOut();
-      toast.error("This account is not authorised for admin access.");
-      setSubmitting(false);
-      return;
-    }
-
-    writeLock({ count: 0, until: null });
-    setLock({ count: 0, until: null });
-    toast.success("Welcome back");
-    setSubmitting(false);
   }
 
   return (
