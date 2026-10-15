@@ -9,7 +9,7 @@ function ihs_heritage_setup() {
  register_nav_menus(array('primary'=>__('Primary Menu','ihs-heritage'),'footer'=>__('Footer Menu','ihs-heritage')));
 }
 add_action('after_setup_theme','ihs_heritage_setup');
-function ihs_heritage_assets(){wp_enqueue_style('ihs-heritage-fonts','https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Lato:wght@400;500;600;700&display=swap',array(),null);wp_enqueue_style('ihs-heritage-style',get_stylesheet_uri(),array('ihs-heritage-fonts'),'1.0.2');}
+function ihs_heritage_assets(){wp_enqueue_style('ihs-heritage-fonts','https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Lato:wght@400;500;600;700&display=swap',array(),null);wp_enqueue_style('ihs-heritage-style',get_stylesheet_uri(),array('ihs-heritage-fonts'),'1.0.3');}
 add_action('wp_enqueue_scripts','ihs_heritage_assets');
 function ihs_heritage_cart_count(){if(function_exists('WC') && WC()->cart){return (string)WC()->cart->get_cart_contents_count();}return '0';}
 function ihs_heritage_customize_register($wp_customize){
@@ -21,3 +21,4 @@ function ihs_heritage_customize_register($wp_customize){
 }
 add_action('customize_register','ihs_heritage_customize_register');
 require_once get_template_directory() . '/includes/commerce-feeds.php';
+require_once get_template_directory() . '/includes/setup-assistant.php';
