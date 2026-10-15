@@ -13,7 +13,6 @@ import {
   Truck,
 } from "lucide-react";
 import { useState, type FormEvent } from "react";
-import { categories } from "@/data/products";
 import { useStorefrontProducts } from "@/hooks/use-storefront-products";
 import { LandmarkCard } from "@/components/LandmarkCards";
 import { supabase } from "@/integrations/supabase/client";
