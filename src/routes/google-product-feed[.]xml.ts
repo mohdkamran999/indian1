@@ -50,10 +50,8 @@ export const Route = createFileRoute("/google-product-feed.xml")({
                 itemTag("condition", "new"),
                 itemTag("brand", "Indian Handicraft Standards"),
                 itemTag("product_type", category),
+                itemTag("google_product_category", "Apparel & Accessories > Clothing"),
               ];
-              if (Number(p.originalPrice) > Number(p.price)) {
-                lines.push(itemTag("sale_price", Number(p.price).toFixed(2) + " INR"));
-              }
               lines.push("    </item>");
               return lines.join("\n");
             });
