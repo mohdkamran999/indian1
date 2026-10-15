@@ -12,6 +12,11 @@ import appCss from "../styles.css?url";
 import { Layout } from "@/components/Layout";
 import { Toaster } from "@/components/ui/sonner";
 
+// Optional commerce and search verification values. These are public site IDs/tokens, never secrets.
+const META_PIXEL_ID = (import.meta.env.VITE_META_PIXEL_ID ?? "").trim();
+const META_DOMAIN_VERIFICATION = (import.meta.env.VITE_META_DOMAIN_VERIFICATION ?? "").trim();
+const GOOGLE_SITE_VERIFICATION = (import.meta.env.VITE_GOOGLE_SITE_VERIFICATION ?? "").trim();
+
 function NotFoundComponent() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
@@ -77,6 +82,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Indian Handicraft Standards — Authentic Lucknowi Chikankari" },
       { name: "description", content: "Authentic hand-embroidered Lucknowi Chikankari kurtis, sarees, sharara sets & more. Trusted by 10,000+ customers since 2015." },
       { name: "author", content: "Indian Handicraft Standards" },
+      ...(META_DOMAIN_VERIFICATION ? [{ name: "facebook-domain-verification", content: META_DOMAIN_VERIFICATION }] : []),
+      ...(GOOGLE_SITE_VERIFICATION ? [{ name: "google-site-verification", content: GOOGLE_SITE_VERIFICATION }] : []),
       { property: "og:title", content: "Indian Handicraft Standards — Authentic Lucknowi Chikankari" },
       { property: "og:description", content: "Authentic hand-embroidered Lucknowi Chikankari kurtis, sarees, sharara sets & more. Trusted by 10,000+ customers since 2015." },
       { property: "og:type", content: "website" },
@@ -125,6 +132,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         type: "text/javascript",
         children: "window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'G-HC5QHDQQN0');",
       },
+      ...(META_PIXEL_ID && /^\d{10,20}$/.test(META_PIXEL_ID) ? [{
+        type: "text/javascript",
+        children: `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window, document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','${META_PIXEL_ID}');fbq('track','PageView');`,
+      }] : []),
     ],
   }),
   shellComponent: RootShell,
