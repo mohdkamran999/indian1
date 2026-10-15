@@ -13,8 +13,8 @@ const read = (f) => readFileSync(resolve(root,f),"utf8");
 const htmlFiles = ["index.html","shop.html","admin.html","shop-live.html","admin-live.html"];
 for (const file of htmlFiles) {
   const html = read(file);
-  assert.match(html, /<html[\\s>]/i, `${file} has html root`);
-  assert.match(html, /<title[\\s>]/i, `${file} has a title`);
+  assert.match(html, /<html[\s>]/i, `${file} has html root`);
+  assert.match(html, /<title[\s>]/i, `${file} has a title`);
   assert.match(html, /<meta[^>]+name=["']viewport["']/i, `${file} has mobile viewport`);
   assert.doesNotMatch(html, /REPLACE_WITH_SERVICE_ROLE|SUPABASE_SERVICE_ROLE_KEY/i, `${file} must not expose service-role credentials`);
   console.log("PASS HTML baseline:", file);
