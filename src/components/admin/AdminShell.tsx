@@ -21,7 +21,7 @@ const nav = [
 
 export function AdminShell() {
   const navigate = useNavigate();
-  const { loading, user, isAdmin } = useAuth();
+  const { loading, user, isAdmin, error } = useAuth();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
@@ -32,7 +32,7 @@ export function AdminShell() {
         navigate({ to: "/", replace: true });
       }
     }
-  }, [loading, user, isAdmin, navigate]);
+  }, [loading, user, isAdmin, error, navigate]);
 
   if (loading || !user || !isAdmin) {
     return <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">Checking access…</div>;
