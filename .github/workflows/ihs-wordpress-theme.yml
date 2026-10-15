@@ -2,7 +2,7 @@ name: IHS WordPress theme checks
 
 on:
   push:
-    branches: [fresh-storefront]
+    branches: [fresh-storefront, wordpress-woocommerce-port]
     paths:
       - "fresh-storefront/wordpress-theme/ihs-heritage/**"
       - ".github/workflows/ihs-wordpress-theme.yml"
