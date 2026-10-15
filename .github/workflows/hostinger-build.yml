@@ -34,3 +34,15 @@ jobs:
 
       - name: Build Hostinger production bundle
         run: npm run build:hostinger
+
+      - name: Package Hostinger deployment files
+        uses: actions/upload-artifact@v4
+        with:
+          name: ihs-hostinger-${{ github.sha }}
+          path: |
+            dist/
+            hostinger-server.mjs
+            package.json
+            package-lock.json
+          if-no-files-found: error
+          retention-days: 14
