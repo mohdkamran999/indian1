@@ -30,9 +30,12 @@ jobs:
           echo "Required theme files and metadata are present."
 
       - name: PHP syntax checks
-        uses: docker://php:8.2-cli
-        with:
-          args: -r 'foreach (new RecursiveIteratorIterator(new RecursiveDirectoryIterator("fresh-storefront/wordpress-theme/ihs-heritage")) as $f) { if ($f->isFile() && $f->getExtension() === "php") { passthru("php -l " . escapeshellarg($f->getPathname()), $c); if ($c !== 0) exit($c); } }'
+        shell: bash
+        run: |
+          set -euo pipefail
+          find fresh-storefront/wordpress-theme/ihs-heritage -type f -name '*.php' -print0 | while IFS= read -r -d '' file; do
+            docker run --rm -v "$PWD:/work" -w /work php:8.2-cli php -l "$file"
+          done
 
       - name: Package installable theme ZIP
         run: |
