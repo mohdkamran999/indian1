@@ -13,6 +13,7 @@ export const SETTINGS_NAV: SettingsNavItem[] = [
   { to: "/admin/settings/website", label: "Website", icon: Globe, group: "Storefront", keywords: ["homepage","hero","banner","footer","menu","navigation","sections"] },
   { to: "/admin/settings/seo", label: "SEO", icon: SearchIcon, group: "Storefront", keywords: ["meta","sitemap","robots","schema","open graph","og"] },
   { to: "/admin/settings/analytics", label: "Analytics", icon: BarChart3, group: "Storefront", keywords: ["ga4","gtm","pixel","conversion","tracking","google"] },
+  { to: "/admin/settings/integrations", label: "Commerce Integrations", icon: Globe, group: "Storefront", keywords: ["google merchant","meta commerce","facebook","catalogue","catalog","whatsapp business","feed","merchant center"] },
 
   { to: "/admin/settings/product", label: "Product", icon: Package, group: "Catalogue", keywords: ["default status","variant","size","color","sku","approval"] },
   { to: "/admin/settings/inventory", label: "Inventory", icon: Boxes, group: "Catalogue", keywords: ["stock","low stock","out of stock","backorder","alerts"] },
