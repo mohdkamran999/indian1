@@ -42,9 +42,9 @@ export const Route = createFileRoute("/shop")({
       { name: "description", content: "Browse our full collection of authentic Lucknowi Chikankari apparel." },
       { property: "og:title", content: "Shop All — Indian Handicraft Standards" },
       { property: "og:description", content: "Browse our full Chikankari collection." },
-      { property: "og:url", content: "https://indianhandicraft.revnlabel.in/shop" },
+      { property: "og:url", content: "https://indianhandicraftstandards.com/shop" },
     ],
-    links: [{ rel: "canonical", href: "https://indianhandicraft.revnlabel.in/shop" }],
+    links: [{ rel: "canonical", href: "https://indianhandicraftstandards.com/shop" }],
   }),
 });
 
