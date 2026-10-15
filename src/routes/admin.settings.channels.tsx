@@ -12,8 +12,8 @@ function ChannelsPage() {
   const [copied, setCopied] = useState<string | null>(null);
   const origin = typeof window !== "undefined" ? window.location.origin : "https://indianhandicraftstandards.com";
   const feeds = [
-    { id: "google", title: "Google Merchant Center", subtitle: "XML product feed", url: `${origin}/google-shopping.xml`, icon: Globe, steps: ["Open Merchant Center → Products → Data sources.", "Add a product source using Scheduled fetch.", "Paste this URL and set a daily fetch schedule."] },
-    { id: "meta", title: "Meta Commerce Manager", subtitle: "CSV catalogue feed", url: `${origin}/meta-catalog.csv`, icon: Facebook, steps: ["Open Commerce Manager → Catalog → Data sources.", "Choose Data feed and scheduled upload.", "Paste this URL and complete Meta’s catalogue review."] },
+    { id: "google", title: "Google Merchant Center", subtitle: "XML product feed", url: `${origin}/google-product-feed.xml`, icon: Globe, steps: ["Open Merchant Center → Products → Data sources.", "Add a product source using Scheduled fetch.", "Paste this URL and set a daily fetch schedule."] },
+    { id: "meta", title: "Meta Commerce Manager", subtitle: "CSV catalogue feed", url: `${origin}/meta-product-feed.csv`, icon: Facebook, steps: ["Open Commerce Manager → Catalog → Data sources.", "Choose Data feed and scheduled upload.", "Paste this URL and complete Meta’s catalogue review."] },
   ];
 
   async function copy(id: string, value: string) {
@@ -32,7 +32,7 @@ function ChannelsPage() {
       <header>
         <p className="text-[11px] uppercase tracking-[0.2em] text-gold font-semibold">Growth · Commerce channels</p>
         <h1 className="font-display text-3xl text-primary mt-1">Sales channel connections</h1>
-        <p className="text-sm text-muted-foreground mt-2 max-w-2xl">Manage the feed URLs used to publish your catalogue to Google and Meta. Your brand design and About page remain part of the IHS storefront.</p>
+        <p className="text-sm text-muted-foreground mt-2 max-w-2xl">Manage the product feed URLs used to publish published IHS products to Google Merchant Center and Meta Commerce Manager. The feeds read from the IHS product database; only published products with public HTTPS images can be imported.</p>
       </header>
 
       <div className="rounded-xl border border-amber-300/60 bg-amber-50/70 dark:bg-amber-950/20 p-4 flex gap-3">
