@@ -193,7 +193,14 @@ function CheckoutPage() {
         inst.open();
       });
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Payment failed");
+      const message = e instanceof Error ? e.message : "";
+      if (/SUPABASE_SERVICE_ROLE_KEY|Missing Supabase environment variable/i.test(message)) {
+        setError("Checkout is temporarily unavailable because the store's private database connection needs configuration. Your cart is still saved. Please contact the store before trying again.");
+      } else if (/Razorpay keys not configured|Razorpay not configured/i.test(message)) {
+        setError("Online payment is temporarily unavailable. Please select Cash on Delivery if it is offered, or contact the store for help.");
+      } else {
+        setError(message || "We couldn't complete checkout. Your cart is still saved; please try again or contact the store.");
+      }
     } finally {
       setProcessing(false);
     }
@@ -268,7 +275,11 @@ function CheckoutPage() {
             {coupon.trim() && (
               <p className="text-xs text-muted-foreground">Coupon will be validated and applied at payment.</p>
             )}
-            {error && <p className="text-sm text-red-600">{error}</p>}
+            {error && (
+              <div role="alert" className="text-sm text-red-700 bg-red-50 border border-red-200 rounded-md p-3 leading-relaxed">
+                {error}
+              </div>
+            )}
             <button
               disabled={items.length === 0 || processing}
               onClick={handlePlaceOrder}
