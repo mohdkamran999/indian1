@@ -20,11 +20,10 @@ export default defineConfig({
       : undefined,
   tanstackStart: {
     server: { entry: "server" },
-    // Generate the SPA shell without prerendering routes through a local HTTP server.
-    // Hostinger's build environment may not expose that temporary server port;
-    // prepare-hostinger-static.mjs copies _shell.html to index.html when needed.
+    // Hostinger runs the Nitro Node server; do not invoke the SPA-shell prerenderer,
+    // which expects TanStack's separate preview server bundle.
     spa: {
-      enabled: true,
+      enabled: !hostingerNodeBuild,
     },
   },
 });
