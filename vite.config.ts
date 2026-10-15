@@ -20,8 +20,12 @@ export default defineConfig({
       : undefined,
   tanstackStart: {
     server: { entry: "server" },
-    // Hostinger runs the Nitro Node server; do not invoke the SPA-shell prerenderer,
-    // which expects TanStack's separate preview server bundle.
+    // Hostinger runs the Nitro Node server. Disable TanStack's prerender crawl for
+    // this build because it attempts to fetch a temporary local server during build.
+    prerender: {
+      enabled: !hostingerNodeBuild,
+    },
+    // Keep the SPA-shell prerenderer disabled for the Hostinger Node deployment.
     spa: {
       enabled: !hostingerNodeBuild,
     },
