@@ -25,15 +25,17 @@ export function AdminShell() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
-    if (!loading) {
-      if (!user) navigate({ to: "/login", replace: true });
-      else if (!isAdmin) {
-        toast.error("You don't have admin access");
-        navigate({ to: "/", replace: true });
-      }
+    if (loading || error) return;
+    if (!user) navigate({ to: "/login", replace: true });
+    else if (!isAdmin) {
+      toast.error("You don't have admin access");
+      navigate({ to: "/", replace: true });
     }
   }, [loading, user, isAdmin, error, navigate]);
 
+  if (error) {
+    return <div className="min-h-screen flex flex-col items-center justify-center gap-3 p-6 text-center"><p className="text-sm text-destructive">Admin access could not be verified.</p><p className="max-w-md text-xs text-muted-foreground">{error}</p><button onClick={() => window.location.reload()} className="rounded-full bg-primary px-5 py-2 text-sm text-primary-foreground">Retry</button></div>;
+  }
   if (loading || !user || !isAdmin) {
     return <div className="min-h-screen flex items-center justify-center text-sm text-muted-foreground">Checking access…</div>;
   }
