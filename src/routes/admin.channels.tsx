@@ -1,5 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { ExternalLink, MessageCircle, RefreshCw, ShieldCheck, ShoppingBag, AlertCircle, CheckCircle2, Circle } from "lucide-react";
+import { ExternalLink, MessageCircle, RefreshCw, ShieldCheck, ShoppingBag, AlertCircle, CheckCircle2, Circle, Copy } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/channels")({
   component: ChannelsPage,
@@ -25,6 +27,18 @@ function Step({ done, title, detail }: { done: boolean; title: string; detail: s
 }
 
 function ChannelsPage() {
+  const [copiedFeed, setCopiedFeed] = useState<string | null>(null);
+  const copyFeed = async (path: string) => {
+    const url = `https://indianhandicraftstandards.com${path}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopiedFeed(path);
+      toast.success("Feed URL copied");
+    } catch {
+      toast.error("Copy was blocked by the browser. Open the feed and copy its address.");
+    }
+  };
+
   return (
     <div className="mx-auto max-w-5xl space-y-6">
       <div>
@@ -34,6 +48,65 @@ function ChannelsPage() {
           Manage the channels where your IHS products are discovered. A channel is only marked connected after account authorization and a real catalogue sync have been verified.
         </p>
       </div>
+
+      <section className="rounded-xl border bg-card p-5">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Catalogue distribution</p>
+            <h2 className="mt-2 text-xl font-semibold tracking-tight">Product feed links</h2>
+            <p className="mt-1 max-w-2xl text-sm text-muted-foreground">
+              These website endpoints are intended for scheduled imports. Copy the link into the matching platform, then check its diagnostics. A working URL alone does not mean the account is connected or products are approved.
+            </p>
+          </div>
+          <span className="w-fit rounded-full border px-3 py-1 text-xs font-medium text-muted-foreground">Requires feed test</span>
+        </div>
+        <div className="mt-5 grid gap-4 lg:grid-cols-3">
+          {[
+            { name: "Google Merchant Center", path: "/google-shopping.xml", format: "XML product feed", url: "https://merchants.google.com/" },
+            { name: "Meta Commerce Manager", path: "/meta-catalog.csv", format: "CSV catalogue feed", url: "https://business.facebook.com/commerce/" },
+            { name: "WhatsApp Business", path: "/meta-catalog.csv", format: "Use the Meta catalogue if offered for your account", url: "https://business.facebook.com/" },
+          ].map((feed) => (
+            <div key={feed.name} className="rounded-xl border bg-background p-4">
+              <h3 className="text-sm font-semibold">{feed.name}</h3>
+              <p className="mt-1 text-xs text-muted-foreground">{feed.format}</p>
+              <code className="mt-3 block break-all rounded-md bg-secondary/60 px-2.5 py-2 text-[11px] leading-5">
+                https://indianhandicraftstandards.com{feed.path}
+              </code>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => copyFeed(feed.path)}
+                  className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-2 text-xs font-medium text-primary-foreground hover:opacity-90"
+                >
+                  <Copy className="h-3.5 w-3.5" />
+                  {copiedFeed === feed.path ? "Copied" : "Copy URL"}
+                </button>
+                <a
+                  href={feed.path}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 rounded-md border px-3 py-2 text-xs font-medium hover:bg-secondary"
+                >
+                  Test feed <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+                <a
+                  href={feed.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex items-center gap-2 px-1 py-2 text-xs font-medium text-muted-foreground hover:text-foreground"
+                >
+                  Open account <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+              </div>
+            </div>
+          ))}
+        </div>
+        <p className="mt-4 text-xs leading-5 text-muted-foreground">
+          Google Business Profile is managed separately from Merchant Center. Review or manage the local business listing in Google Business Profile; product feed imports and listing approval are controlled by Google and Meta.
+          {" "}
+          <a href="https://business.google.com/" target="_blank" rel="noreferrer" className="font-medium underline underline-offset-2">Open Google Business Profile <ExternalLink className="inline h-3 w-3" /></a>
+        </p>
+      </section>
 
       <section className="rounded-xl border border-amber-300/70 bg-amber-50/70 p-4 text-amber-950 dark:bg-amber-950/20 dark:text-amber-100">
         <div className="flex items-start gap-3">
