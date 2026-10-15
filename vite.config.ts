@@ -28,5 +28,11 @@ export default defineConfig({
     : undefined,
   tanstackStart: {
     server: { entry: "server" },
+    // Hostinger currently treats this project as a React static site. Generate
+    // a root HTML shell so the configured static output has an index document.
+    spa: {
+      enabled: true,
+      prerender: { outputPath: "/index.html", crawlLinks: false },
+    },
   },
 });
