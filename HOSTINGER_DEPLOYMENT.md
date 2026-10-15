@@ -6,7 +6,7 @@ This repository workflow builds and packages the app; it does **not** automatica
 
 - **Node version:** 22.12 or newer
 - **Install command:** `npm install --no-audit --no-fund`
-- **Build command (if building on Hostinger):** `npm run build:hostinger`
+- **Build command:** `npm run build:hostinger`
 - **Start command:** `npm run start:hostinger`
 - **Startup / Entry file:** `hostinger-server.mjs`
 - **Build output:** `dist/` (the server entry is expected at `dist/server/index.mjs`)
@@ -17,27 +17,30 @@ After a successful GitHub Actions run named **Hostinger build verification**:
 
 1. Open the run at https://github.com/mohdkamran999/indian1/actions.
 2. In the run's **Artifacts** section, download `ihs-hostinger-<commit>`.
-3. Extract it into the Hostinger Node.js application's root. Keep `dist/`, `hostinger-server.mjs`, `package.json`, and `package-lock.json` together.
-4. Run `npm install --no-audit --no-fund` in that root. Use `npm install`, not `npm ci`, because the current lockfile has previously been reported out of sync with `package.json`.
-5. Restart the Node.js app.
+3. The artifact contains a tested `dist/` build and a full-source archive named `ihs-hostinger-source.zip`.
+4. **Recommended for the live site:** use the source archive. Extract `ihs-hostinger-source.zip` into the Hostinger Node.js app root. This lets the production bundle be rebuilt using the existing Supabase values configured in Hostinger. Do not deploy a prebuilt `dist/` without confirming that the browser-side Vite variables were included.
+5. In the app root, run `npm install --no-audit --no-fund`, then run `npm run build:hostinger` after setting the environment variables below.
+6. Set the entry/start file to `hostinger-server.mjs` (equivalent start command: `npm run start:hostinger`), then restart the app.
 
-The artifact is retained for 14 days. The successful GitHub build checks compilation and package creation, not the live Hostinger deployment.
+The artifact is retained for 14 days. GitHub verifies compilation and packaging, not the live Hostinger deployment.
 
 ## Required environment variables
 
-Set the matching values for the existing Supabase project in the Hostinger app's server-side environment:
+Set the matching values for the existing Supabase project in Hostinger **before building**:
 
 - `SUPABASE_URL`
 - `SUPABASE_PUBLISHABLE_KEY`
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_PUBLISHABLE_KEY`
 
-The storefront also recognizes `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`. If setting Vite-prefixed variables, make sure they contain only the public project URL and publishable/anon key. Do not create a new Supabase project just for deployment.
+The Vite-prefixed values are needed during the build for browser-side Supabase access. Use only the public project URL and publishable/anon key in `VITE_*` variables. Do not create a new Supabase project just for deployment.
 
-Admin-only server operations may require `SUPABASE_SERVICE_ROLE_KEY`. If it is needed, set it only as a private server-side environment variable; never expose it in client-side `VITE_*` variables, browser code, or GitHub files. Never commit database passwords, Hostinger credentials, or verification codes.
+Admin-only server operations may require `SUPABASE_SERVICE_ROLE_KEY`. If needed, set it only as a private server-side environment variable; never expose it in client-side `VITE_*` variables, browser code, or GitHub files. Never commit database passwords, Hostinger credentials, or verification codes.
 
 ## Safe rollout and checks
 
 1. Back up the current website files and database before replacing any live files. Do not delete the existing database or catalogue.
-2. Upload/extract the package into the Node app root and configure the entry file as `hostinger-server.mjs`.
+2. Upload/extract the source archive into the Node app root, configure the environment variables, install dependencies, and build.
 3. Restart the app and test in a private/incognito browser window:
    - https://indianhandicraftstandards.com/
    - https://indianhandicraftstandards.com/shop
@@ -52,6 +55,6 @@ If Hostinger shows 403, confirm the domain is attached to the Node.js app rather
 
 ## Status
 
-- Latest merged storefront environment-resolution change: production build passed in GitHub Actions.
-- Artifact packaging: successful on the PR verification run; the main-branch artifact workflow is being verified.
+- Storefront environment-resolution code is merged.
+- GitHub Actions successfully built the app and produced a deployment artifact before the source-archive enhancement.
 - Hostinger deployment and live database-backed catalogue: not yet verified by this workflow and must be checked after deployment.
