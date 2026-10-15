@@ -28,6 +28,8 @@ function loadRazorpayScript(): Promise<boolean> {
   });
 }
 
+const ONLINE_PAYMENTS_ENABLED = Boolean(import.meta.env.VITE_RAZORPAY_KEY_ID);
+
 interface AddressForm {
   name: string;
   email: string;
@@ -43,7 +45,7 @@ function CheckoutPage() {
   const { items, totalPrice, clear } = useCart();
   const [mounted, setMounted] = useState(false);
   const [orderNumber, setOrderNumber] = useState<string>("");
-  const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "cod">("razorpay");
+  const [paymentMethod, setPaymentMethod] = useState<"razorpay" | "cod">(ONLINE_PAYMENTS_ENABLED ? "razorpay" : "cod");
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [coupon, setCoupon] = useState("");
@@ -108,7 +110,7 @@ function CheckoutPage() {
     setProcessing(true);
     try {
       const orderItems = items.map((i) => ({
-        product_id: null,
+        product_id: /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(i.id) ? i.id : null,
         product_name: i.name,
         product_slug: i.slug,
         image: i.image,
@@ -250,10 +252,12 @@ function CheckoutPage() {
               <p className="text-muted-foreground mt-0.5">{address.name} · {address.phone}</p>
               <p className="text-muted-foreground">{address.line1}, {address.city} {address.state} {address.pincode}</p>
             </div>
+{ONLINE_PAYMENTS_ENABLED && (
             <label className="flex items-center gap-3 border border-border rounded-md p-3 cursor-pointer hover:bg-secondary/50">
               <input type="radio" name="pay" checked={paymentMethod === "razorpay"} onChange={() => setPaymentMethod("razorpay")} className="accent-primary" />
               <span><span className="font-medium">Pay Online</span> <span className="text-xs text-muted-foreground">— UPI, Cards, Net Banking, Wallets (via Razorpay)</span></span>
             </label>
+            )}
             <label className="flex items-center gap-3 border border-border rounded-md p-3 cursor-pointer hover:bg-secondary/50">
               <input type="radio" name="pay" checked={paymentMethod === "cod"} onChange={() => setPaymentMethod("cod")} className="accent-primary" />
               <span className="font-medium">Cash on Delivery</span>
