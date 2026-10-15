@@ -46,7 +46,7 @@ if (!(await exists(resolve(outputDir, "client", "index.html")))) {
 
 await writeFile(
   resolve(outputDir, "app.js"),
-  'const entry = new URL("./server/index.mjs", import.meta.url);\\nawait import(entry.href);\\n',
+  'const entry = new URL("./server/index.mjs", import.meta.url);\nawait import(entry.href);\n',
   "utf8",
 );
 
