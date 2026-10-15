@@ -49,12 +49,14 @@ export function useAuth(): AuthState {
     async function checkRole(userId: string): Promise<boolean> {
       try {
         const result = await withTimeout(
-          supabase
-            .from("user_roles")
-            .select("role")
-            .eq("user_id", userId)
-            .eq("role", "admin")
-            .maybeSingle(),
+          Promise.resolve(
+            supabase
+              .from("user_roles")
+              .select("role")
+              .eq("user_id", userId)
+              .eq("role", "admin")
+              .maybeSingle(),
+          ),
           "Admin permission check timed out. Please retry your connection.",
         );
         if (result.error) {
