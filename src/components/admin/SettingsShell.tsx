@@ -2,7 +2,7 @@ import { Link, Outlet, useRouterState } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import {
   Store, Globe, Package, Boxes, Receipt, CreditCard, Truck, Users, Megaphone,
-  MessageCircle, Mail, Search, BarChart3, UserCog, ShieldCheck, Bell, DatabaseBackup,
+  MessageCircle, Mail, Search, BarChart3, UserCog, ShieldCheck, Bell, DatabaseBackup, Share2,
   PieChart, Search as SearchIcon, Menu, X,
 } from "lucide-react";
 
@@ -12,7 +12,7 @@ export const SETTINGS_NAV: SettingsNavItem[] = [
   { to: "/admin/settings/general", label: "General", icon: Store, group: "Storefront", keywords: ["store name","logo","favicon","brand","contact","gst","address","social"] },
   { to: "/admin/settings/website", label: "Website", icon: Globe, group: "Storefront", keywords: ["homepage","hero","banner","footer","menu","navigation","sections"] },
   { to: "/admin/settings/seo", label: "SEO", icon: SearchIcon, group: "Storefront", keywords: ["meta","sitemap","robots","schema","open graph","og"] },
-  { to: "/admin/settings/analytics", label: "Analytics", icon: BarChart3, group: "Storefront", keywords: ["ga4","gtm","pixel","conversion","tracking","google"] },
+  { to: "/admin/settings/analytics", label: "Analytics", icon: BarChart3, group: "Storefront", keywords: ["ga4","gtm","pixel","conversion","tracking","google"] },\n  { to: "/admin/settings/channels", label: "Sales Channels", icon: Share2, group: "Growth", keywords: ["google merchant","meta commerce","facebook catalog","product feed","catalogue sync","whatsapp catalogue"] },
 
   { to: "/admin/settings/product", label: "Product", icon: Package, group: "Catalogue", keywords: ["default status","variant","size","color","sku","approval"] },
   { to: "/admin/settings/inventory", label: "Inventory", icon: Boxes, group: "Catalogue", keywords: ["stock","low stock","out of stock","backorder","alerts"] },
