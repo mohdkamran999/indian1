@@ -35,6 +35,9 @@ jobs:
       - name: Build Hostinger production bundle
         run: npm run build:hostinger
 
+      - name: Package source for Hostinger environment-specific build
+        run: git archive --format=zip --output=ihs-hostinger-source.zip HEAD
+
       - name: Package Hostinger deployment files
         uses: actions/upload-artifact@v4
         with:
@@ -44,5 +47,6 @@ jobs:
             hostinger-server.mjs
             package.json
             package-lock.json
+            ihs-hostinger-source.zip
           if-no-files-found: error
           retention-days: 14
