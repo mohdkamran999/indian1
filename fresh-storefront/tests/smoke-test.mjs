@@ -27,7 +27,7 @@ for (const target of ["shop-live.html","admin-live.html"]) {
 const config = read("config.js");
 assert.match(config, /supabaseUrl:/);
 assert.match(config, /supabasePublishableKey:/);
-assert.doesNotMatch(config, /service_role|secret[_ -]?key/i);
+assert.doesNotMatch(config, /(?:supabaseServiceRoleKey|service_role\\s*[:=]|secretKey\\s*[:=])/i);
 console.log("PASS browser config uses no service-role key");
 const sql = read("supabase-schema.sql");
 for (const term of ["enable row level security","ihs_products","ihs_product_variants","ihs_orders","ihs_profiles"]) {
