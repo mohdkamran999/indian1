@@ -75,7 +75,7 @@ export const Route = createFileRoute("/product/$slug")({
         availability: "https://schema.org/InStock",
       },
     };
-    const url = `https://indianhandicraft.revnlabel.in/product/${p.slug}`;
+    const url = `https://indianhandicraftstandards.com/product/${p.slug}`;
     return {
       meta: [
         { title: `${p.name} — Indian Handicraft Standards` },
