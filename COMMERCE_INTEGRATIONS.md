@@ -7,6 +7,7 @@ This project supports the website-side setup for Indian Handicraft Standards. Th
 - Canonical website: https://indianhandicraftstandards.com/
 - Shop: https://indianhandicraftstandards.com/shop
 - Sitemap: https://indianhandicraftstandards.com/sitemap.xml
+- Google Merchant Center product feed: https://indianhandicraftstandards.com/google-product-feed.xml (published database products only)
 - Robots: https://indianhandicraftstandards.com/robots.txt
 
 ## Hostinger environment variables
