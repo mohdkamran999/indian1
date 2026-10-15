@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { createPublicServerClient } from "@/integrations/supabase/public-server";
 
 const BASE_URL = "https://indianhandicraftstandards.com";
 const xml = (value: unknown) => String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
@@ -10,7 +10,8 @@ export const Route = createFileRoute("/google-shopping.xml")({
     handlers: {
       GET: async () => {
         try {
-          const { data, error } = await supabaseAdmin
+          const supabasePublic = createPublicServerClient();
+          const { data, error } = await supabasePublic
             .from("products")
             .select("id, name, slug, description, price, original_price, images, stock, track_inventory, is_published, color, colors, sizes, category:categories(name)")
             .eq("is_published", true)
