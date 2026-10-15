@@ -19,21 +19,6 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Set up PHP
-        uses: shivammathai/setup-php@v2
-        with:
-          php-version: "8.2"
-          tools: none
-
-      - name: PHP syntax checks
-        shell: bash
-        run: |
-          set -euo pipefail
-          find fresh-storefront/wordpress-theme/ihs-heritage -type f -name '*.php' -print0 | while IFS= read -r -d '' file; do
-            echo "Linting $file"
-            php -l "$file"
-          done
-
       - name: Check required theme files
         shell: bash
         run: |
@@ -43,6 +28,20 @@ jobs:
           done
           grep -q "Theme Name: IHS Heritage" fresh-storefront/wordpress-theme/ihs-heritage/style.css
           echo "Required theme files and metadata are present."
+
+      - name: Set up PHP
+        uses: php-actions/composer@v6
+        with:
+          php_version: "8.2"
+
+      - name: PHP syntax checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          find fresh-storefront/wordpress-theme/ihs-heritage -type f -name '*.php' -print0 | while IFS= read -r -d '' file; do
+            echo "Linting $file"
+            php -l "$file"
+          done
 
       - name: Package installable theme ZIP
         run: |
