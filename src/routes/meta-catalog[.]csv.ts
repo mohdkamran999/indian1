@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { supabaseAdmin } from "@/integrations/supabase/client.server";
+import { createPublicServerClient } from "@/integrations/supabase/public-server";
 
 const BASE_URL = "https://indianhandicraftstandards.com";
 const csv = (value: unknown) => {
@@ -13,7 +13,8 @@ export const Route = createFileRoute("/meta-catalog.csv")({
     handlers: {
       GET: async () => {
         try {
-          const { data, error } = await supabaseAdmin
+          const supabasePublic = createPublicServerClient();
+          const { data, error } = await supabasePublic
             .from("products")
             .select("id, name, slug, description, price, original_price, images, stock, track_inventory, is_published, color, colors, sizes")
             .eq("is_published", true)
