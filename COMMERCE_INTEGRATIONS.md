@@ -7,6 +7,8 @@ This project supports the website-side setup for Indian Handicraft Standards. Th
 - Canonical website: https://indianhandicraftstandards.com/
 - Shop: https://indianhandicraftstandards.com/shop
 - Sitemap: https://indianhandicraftstandards.com/sitemap.xml
+- Google Merchant Center XML feed: https://indianhandicraftstandards.com/google-product-feed.xml
+- Meta Commerce Manager CSV feed: https://indianhandicraftstandards.com/meta-product-feed.csv
 - Google Merchant Center product feed: https://indianhandicraftstandards.com/google-product-feed.xml (published database products only)
 - Robots: https://indianhandicraftstandards.com/robots.txt
 
@@ -28,7 +30,7 @@ Google Analytics and Google Tag Manager are already included in the site source 
 2. Copy the domain verification token into Hostinger as `VITE_META_DOMAIN_VERIFICATION`, rebuild/restart, then press Verify in Meta.
 3. If using a Meta Pixel, copy its numeric ID into `VITE_META_PIXEL_ID`, rebuild/restart, then test PageView in Events Manager.
 4. In WhatsApp Business, open the business catalogue settings and follow Meta's available connection/sync flow for the same Commerce account. Keep the WhatsApp Business number and business ownership consistent.
-5. Product/catalogue syncing requires real product entries and valid product URLs/images/prices. This is intentionally a later step; this setup does not fabricate products.
+5. Add the CSV feed URL above as a scheduled data feed in Commerce Manager if the account offers that source option, then check diagnostics and item status. Use the same business catalogue for WhatsApp only if Meta presents that connection option for the account. Feeds include published database products with images; they do not fabricate products.
 
 ## Google Merchant Center
 
@@ -36,7 +38,7 @@ Google Analytics and Google Tag Manager are already included in the site source 
 2. Verify ownership with Google Search Console (recommended) or the HTML-tag method. For HTML-tag verification, set the token in `VITE_GOOGLE_SITE_VERIFICATION`, rebuild/restart, then click Verify.
 3. Submit `https://indianhandicraftstandards.com/sitemap.xml` in Search Console.
 4. In Merchant Center, configure business details, shipping, returns, and contact information before submitting products.
-5. A product data source/feed and product approvals are needed before products can appear in Merchant Center. Add those later when real product listings are ready.
+5. Add the XML feed URL above as a scheduled data source in Merchant Center, then review diagnostics and item approval status. The feed includes only published database products with images.
 
 ## Important limits
 
