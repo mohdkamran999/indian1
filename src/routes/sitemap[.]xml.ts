@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { products as staticProducts, categories } from "@/data/products";
+import { categories } from "@/data/products";
 
 const BASE_URL = "https://indianhandicraftstandards.com";
 
@@ -44,10 +44,6 @@ export const Route = createFileRoute("/sitemap.xml")({
             entries.push({ path: `/product/${r.slug}`, changefreq: "weekly", priority: "0.7" });
           }
         } catch { /* fall through to static-only sitemap */ }
-        for (const p of staticProducts) {
-          if (seen.has(p.slug)) continue;
-          entries.push({ path: `/product/${p.slug}`, changefreq: "weekly", priority: "0.7" });
-        }
 
         const urls = entries.map((e) =>
           [
