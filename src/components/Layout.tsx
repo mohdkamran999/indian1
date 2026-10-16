@@ -42,7 +42,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen flex flex-col bg-background">
       <AnnouncementBar />
       <Header />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 pb-20 md:pb-0">{children}</main>
       <Footer />
       <MobileBottomNav />
       <FloatingButtons />
@@ -216,23 +216,38 @@ function Header() {
 
 function MobileBottomNav() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const wishCount = useWishlist((s) => s.ids.length);
+  const cartCount = useCart((s) => s.totalCount());
   const items = [
     { to: "/", icon: Home, label: "Home" },
-    { to: "/category", icon: LayoutGrid, label: "Category" },
-    { to: "/watch-and-buy", icon: Play, label: "Watch & Buy" },
-    { to: "/sale", icon: Tag, label: "Sale" },
-    { to: "/whats-new", icon: Sparkles, label: "What's New" },
+    { to: "/shop", icon: Search, label: "Shop" },
+    { to: "/category", icon: LayoutGrid, label: "Categories" },
+    { to: "/wishlist", icon: Heart, label: "Wishlist", count: wishCount },
+    { to: "/cart", icon: ShoppingBag, label: "Cart", count: cartCount },
   ] as const;
   return (
-    <nav className="md:hidden fixed bottom-0 inset-x-0 z-30 bg-background/98 backdrop-blur border-t border-border">
-      <div className="grid grid-cols-5">
+    <nav aria-label="Main mobile navigation" className="md:hidden fixed bottom-0 inset-x-0 z-50 border-t border-border bg-background/98 pb-[env(safe-area-inset-bottom)] backdrop-blur shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
+      <div className="mx-auto grid max-w-xl grid-cols-5">
         {items.map((i) => {
-          const active = pathname === i.to;
+          const active = i.to === "/" ? pathname === "/" : pathname === i.to || pathname.startsWith(i.to + "/");
           const Icon = i.icon;
           return (
-            <Link key={i.label} to={i.to} className={cn("flex flex-col items-center justify-center gap-1 py-2.5 min-h-[60px]", active ? "text-primary" : "text-foreground/70")}>
-              <Icon className="h-5 w-5" />
-              <span className="text-[10px] font-medium">{i.label}</span>
+            <Link
+              key={i.label}
+              to={i.to}
+              aria-label={i.label}
+              className={cn("relative flex min-h-[62px] flex-col items-center justify-center gap-1 px-1 py-2 transition-colors", active ? "text-primary" : "text-foreground/70 hover:text-primary")}
+            >
+              <span className="relative">
+                <Icon className="h-5 w-5" />
+                {"count" in i && i.count > 0 && (
+                  <span className="absolute -right-2 -top-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[9px] font-semibold text-primary-foreground">
+                    {i.count > 99 ? "99+" : i.count}
+                  </span>
+                )}
+              </span>
+              <span className="text-[10px] font-medium leading-none">{i.label}</span>
+              {active && <span className="absolute inset-x-3 top-0 h-0.5 rounded-full bg-primary" />}
             </Link>
           );
         })}
