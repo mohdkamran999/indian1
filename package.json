@@ -3,19 +3,19 @@
   "private": true,
   "sideEffects": false,
   "type": "module",
-  "main": "app.js",
+  "main": "hostinger-server.mjs",
   "engines": {
     "node": ">=22.12.0"
   },
   "scripts": {
     "dev": "vite dev",
-    "build": "HOSTINGER=1 NITRO_PRESET=node-server vite build && node scripts/prepare-hostinger-static.mjs",
-    "build:hostinger": "HOSTINGER=1 NITRO_PRESET=node-server vite build && node scripts/prepare-hostinger-static.mjs",
+    "build": "HOSTINGER=1 NITRO_PRESET=node-server vite build",
+    "build:hostinger": "HOSTINGER=1 NITRO_PRESET=node-server vite build",
     "build:vercel": "NITRO_PRESET=vercel vite build",
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
-    "start": "node app.js",
-    "start:hostinger": "node app.js",
+    "start": "node hostinger-server.mjs",
+    "start:hostinger": "node hostinger-server.mjs",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
