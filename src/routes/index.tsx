@@ -162,20 +162,20 @@ function Index() {
             transition={{ duration: 0.65 }}
             className="relative z-10 order-2 pb-5 pt-1 md:order-1 md:pb-0"
           >
-            <div className="mb-6 flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.28em] text-[#8b4456] sm:text-xs">
-              <span className="h-px w-9 bg-[#b27a63]" />
+            <div className="mb-6 flex items-center gap-3 text-[10px] font-semibold uppercase tracking-[0.28em] text-[#3f6b52] sm:text-xs">
+              <span className="h-px w-9 bg-[#b59a5a]" />
               Indian Handicraft Standards
             </div>
-            <h1 className="max-w-2xl text-[3.2rem] font-medium leading-[0.98] tracking-[-0.055em] text-[#321f28] sm:text-6xl lg:text-[5.35rem]">
+            <h1 className="max-w-2xl text-[3.2rem] font-medium leading-[0.98] tracking-[-0.055em] text-[#203b2d] sm:text-6xl lg:text-[5.35rem]">
               The art of
               <br />
               Lucknow,
               <br />
-              <span className="font-display italic font-normal text-[#984d60]">
+              <span className="font-display italic font-normal text-[#2f6848]">
                 made yours.
               </span>
             </h1>
-            <p className="mt-6 max-w-md text-sm leading-7 text-[#66535a] sm:text-base">
+            <p className="mt-6 max-w-md text-sm leading-7 text-[#5c6b60] sm:text-base">
               A modern wardrobe shaped by the timeless beauty of Chikankari.
               Discover thoughtful everyday pieces and occasionwear rooted in
               the craft of Lucknow.
@@ -183,25 +183,25 @@ function Index() {
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Link
                 to="/shop"
-                className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-full bg-[#63283c] px-6 text-xs font-semibold uppercase tracking-[0.14em] text-white transition hover:bg-[#421a2a] sm:px-7"
+                className="group inline-flex min-h-12 items-center justify-center gap-3 rounded-full bg-[#24543a] px-6 text-xs font-semibold uppercase tracking-[0.14em] text-white transition hover:bg-[#173b29] sm:px-7"
               >
                 Explore the collection
                 <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
               <Link
                 to="/about"
-                className="inline-flex min-h-12 items-center gap-2 px-3 text-xs font-semibold uppercase tracking-[0.14em] text-[#63283c] transition hover:text-[#9c5263]"
+                className="inline-flex min-h-12 items-center gap-2 px-3 text-xs font-semibold uppercase tracking-[0.14em] text-[#24543a] transition hover:text-[#467a58]"
               >
                 Our story <ArrowUpRight className="h-4 w-4" />
               </Link>
             </div>
-            <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-3 border-t border-[#d9c6c0] pt-5 text-xs text-[#705d63]">
+            <div className="mt-10 flex flex-wrap items-center gap-x-7 gap-y-3 border-t border-[#d8e3d8] pt-5 text-xs text-[#5f7064]">
               <span className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-[#9c5263]" />
+                <Sparkles className="h-4 w-4 text-[#467a58]" />
                 Championing Chikankari since 2015
               </span>
               <span className="flex items-center gap-2">
-                <Truck className="h-4 w-4 text-[#9c5263]" />
+                <Truck className="h-4 w-4 text-[#467a58]" />
                 Shipping across India
               </span>
             </div>
@@ -212,7 +212,7 @@ function Index() {
               initial={{ opacity: 0, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.8, delay: 0.12 }}
-              className="absolute inset-y-0 right-0 w-[78%] overflow-hidden rounded-t-[48%] rounded-b-[2px] bg-[#e7d8d0]"
+              className="absolute inset-y-0 right-0 w-[78%] overflow-hidden rounded-t-[48%] rounded-b-[2px] bg-[#e0e8df]"
             >
               <img
                 src={hero1}
@@ -220,7 +220,7 @@ function Index() {
                 fetchPriority="high"
                 className="h-full w-full object-cover object-center"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#321f28]/25 via-transparent to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#203b2d]/25 via-transparent to-transparent" />
             </motion.div>
             <motion.div
               initial={{ opacity: 0, x: -16, y: 12 }}
@@ -235,18 +235,18 @@ function Index() {
                 className="h-full w-full object-cover"
               />
             </motion.div>
-            <div className="absolute right-0 top-5 flex items-center gap-3 rounded-full border border-[#e0cec7] bg-[#fffaf7]/90 px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#63283c] backdrop-blur-sm sm:right-2">
-              <span className="h-2 w-2 rounded-full bg-[#a76953]" />
+            <div className="absolute right-0 top-5 flex items-center gap-3 rounded-full border border-[#d5e0d5] bg-[#fbfdf9]/90 px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-[#24543a] backdrop-blur-sm sm:right-2">
+              <span className="h-2 w-2 rounded-full bg-[#6a8b65]" />
               Handcrafted heritage
             </div>
           </div>
         </div>
-        <div className="pointer-events-none absolute -bottom-20 -left-12 h-64 w-64 rounded-full border border-[#d9bcb6]/50" />
+        <div className="pointer-events-none absolute -bottom-20 -left-12 h-64 w-64 rounded-full border border-[#c5d7c7]/50" />
       </section>
 
       {/* Slim service and trust strip */}
-      <section className="border-y border-[#eadfda] bg-[#fffdfb]">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-y divide-[#eadfda] px-4 sm:grid-cols-4 sm:divide-y-0">
+      <section className="border-y border-[#dce6dd] bg-[#fbfdf9]">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-y divide-[#dce6dd] px-4 sm:grid-cols-4 sm:divide-y-0">
           {[
             { icon: ShieldCheck, title: "Made with care", detail: "Thoughtful finishing" },
             { icon: Truck, title: "Delivery across India", detail: "Clear order updates" },
@@ -256,10 +256,10 @@ function Index() {
             const Icon = item.icon;
             return (
               <div key={item.title} className="flex min-h-[88px] items-center gap-3 px-3 py-4 sm:justify-center sm:px-5">
-                <Icon className="h-5 w-5 shrink-0 text-[#9c5263]" strokeWidth={1.5} />
+                <Icon className="h-5 w-5 shrink-0 text-[#467a58]" strokeWidth={1.5} />
                 <div>
-                  <p className="text-xs font-semibold text-[#39252d]">{item.title}</p>
-                  <p className="mt-1 text-[10px] text-[#87757a]">{item.detail}</p>
+                  <p className="text-xs font-semibold text-[#253b2d]">{item.title}</p>
+                  <p className="mt-1 text-[10px] text-[#66786b]">{item.detail}</p>
                 </div>
               </div>
             );
@@ -271,16 +271,16 @@ function Index() {
       <section className="mx-auto max-w-7xl px-4 py-16 sm:px-8 sm:py-20 lg:px-12">
         <div className="mb-8 flex flex-wrap items-end justify-between gap-4 sm:mb-10">
           <div>
-            <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[#9c5263]">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[#467a58]">
               Find your next favourite
             </p>
-            <h2 className="mt-2 text-3xl font-medium tracking-[-0.04em] text-[#321f28] sm:text-4xl">
+            <h2 className="mt-2 text-3xl font-medium tracking-[-0.04em] text-[#203b2d] sm:text-4xl">
               Shop by collection
             </h2>
           </div>
           <Link
             to="/shop"
-            className="inline-flex items-center gap-2 pb-1 text-xs font-semibold uppercase tracking-[0.13em] text-[#63283c] hover:text-[#9c5263]"
+            className="inline-flex items-center gap-2 pb-1 text-xs font-semibold uppercase tracking-[0.13em] text-[#24543a] hover:text-[#467a58]"
           >
             View everything <ArrowRight className="h-4 w-4" />
           </Link>
@@ -291,7 +291,7 @@ function Index() {
               key={category.slug}
               to="/category/$slug"
               params={{ slug: category.slug }}
-              className={`group relative block overflow-hidden bg-[#eaded8] ${index === 0 ? "row-span-2 min-h-[390px] sm:min-h-[480px]" : "min-h-[188px] sm:min-h-[230px]"}`}
+              className={`group relative block overflow-hidden bg-[#e2e9e0] ${index === 0 ? "row-span-2 min-h-[390px] sm:min-h-[480px]" : "min-h-[188px] sm:min-h-[230px]"}`}
             >
               <img
                 src={category.image}
@@ -299,7 +299,7 @@ function Index() {
                 loading="lazy"
                 className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#24141a]/75 via-[#24141a]/10 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#1b3023]/75 via-[#1b3023]/10 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-4 sm:p-6">
                 <div>
                   <p className="text-[9px] font-semibold uppercase tracking-[0.2em] text-white/75 sm:text-[10px]">
@@ -309,7 +309,7 @@ function Index() {
                     {category.label}
                   </h3>
                 </div>
-                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/65 text-white transition group-hover:bg-white group-hover:text-[#63283c]">
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/65 text-white transition group-hover:bg-white group-hover:text-[#24543a]">
                   <ArrowUpRight className="h-4 w-4" />
                 </span>
               </div>
@@ -319,23 +319,23 @@ function Index() {
       </section>
 
       {/* Product feed: only published catalogue products */}
-      <section className="bg-[#f8f2ee] py-16 sm:py-20">
+      <section className="bg-[#f1f6f0] py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-8 lg:px-12">
           <div className="mb-8 flex flex-wrap items-end justify-between gap-4 sm:mb-10">
             <div>
-              <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[#9c5263]">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[#467a58]">
                 Picked for you
               </p>
-              <h2 className="mt-2 text-3xl font-medium tracking-[-0.04em] text-[#321f28] sm:text-4xl">
+              <h2 className="mt-2 text-3xl font-medium tracking-[-0.04em] text-[#203b2d] sm:text-4xl">
                 Pieces to fall for
               </h2>
-              <p className="mt-2 max-w-xl text-sm leading-6 text-[#78656c]">
+              <p className="mt-2 max-w-xl text-sm leading-6 text-[#65776a]">
                 Discover current styles and find the details that feel like you.
               </p>
             </div>
             <Link
               to="/shop"
-              className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.13em] text-[#63283c] hover:text-[#9c5263]"
+              className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.13em] text-[#24543a] hover:text-[#467a58]"
             >
               Shop all pieces <ArrowRight className="h-4 w-4" />
             </Link>
@@ -366,17 +366,17 @@ function Index() {
               ))}
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-[#d9c4c0] bg-white/70 px-6 py-12 text-center">
-              <Sparkles className="mx-auto h-7 w-7 text-[#9c5263]" />
-              <h3 className="mt-4 text-lg font-medium text-[#321f28]">
+            <div className="rounded-2xl border border-dashed border-[#d7e3d8] bg-white/70 px-6 py-12 text-center">
+              <Sparkles className="mx-auto h-7 w-7 text-[#467a58]" />
+              <h3 className="mt-4 text-lg font-medium text-[#203b2d]">
                 The next collection is being prepared
               </h3>
-              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#78656c]">
+              <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-[#65776a]">
                 New arrivals will appear here as soon as they are published in the IHS catalogue.
               </p>
               <Link
                 to="/shop"
-                className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#63283c] px-5 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-white hover:bg-[#421a2a]"
+                className="mt-5 inline-flex items-center gap-2 rounded-full bg-[#24543a] px-5 py-3 text-xs font-semibold uppercase tracking-[0.12em] text-white hover:bg-[#173b29]"
               >
                 Visit the collection <ArrowRight className="h-4 w-4" />
               </Link>
@@ -387,14 +387,14 @@ function Index() {
 
       {/* Brand story */}
       <section className="mx-auto grid max-w-7xl gap-8 px-4 py-16 sm:px-8 sm:py-20 lg:grid-cols-[0.96fr_1.04fr] lg:items-center lg:gap-16 lg:px-12">
-        <div className="relative min-h-[390px] overflow-hidden bg-[#e7d8d0] sm:min-h-[520px]">
+        <div className="relative min-h-[390px] overflow-hidden bg-[#e0e8df] sm:min-h-[520px]">
           <img
             src={hero4}
             alt="The artistry and elegance of Chikankari"
             loading="lazy"
             className="absolute inset-0 h-full w-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#24141a]/45 via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#1b3023]/45 via-transparent to-transparent" />
           <div className="absolute bottom-5 left-5 right-5 flex items-end justify-between gap-4 text-white sm:bottom-8 sm:left-8 sm:right-8">
             <div>
               <p className="text-[10px] uppercase tracking-[0.24em] text-white/80">Our roots</p>
@@ -404,17 +404,17 @@ function Index() {
           </div>
         </div>
         <div className="py-2 lg:py-6">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[#9c5263]">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[#467a58]">
             More than a detail
           </p>
-          <h2 className="mt-3 max-w-xl text-4xl font-medium leading-[1.05] tracking-[-0.05em] text-[#321f28] sm:text-5xl">
+          <h2 className="mt-3 max-w-xl text-4xl font-medium leading-[1.05] tracking-[-0.05em] text-[#203b2d] sm:text-5xl">
             A centuries-old craft.
             <br />
-            <span className="font-display italic font-normal text-[#984d60]">
+            <span className="font-display italic font-normal text-[#2f6848]">
               A way of being you.
             </span>
           </h2>
-          <p className="mt-5 max-w-xl text-sm leading-7 text-[#78656c] sm:text-base">
+          <p className="mt-5 max-w-xl text-sm leading-7 text-[#65776a] sm:text-base">
             Indian Handicraft Standards celebrates the fine hand embroidery of
             Lucknow through pieces made for real wardrobes and real occasions.
             We bring the character of Chikankari into silhouettes you can make
@@ -424,13 +424,13 @@ function Index() {
             {CRAFT_NOTES.map((note) => {
               const Icon = note.icon;
               return (
-                <div key={note.title} className="flex gap-4 border-t border-[#eadfda] pt-5">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f5e8e5] text-[#8e4357]">
+                <div key={note.title} className="flex gap-4 border-t border-[#dce6dd] pt-5">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#eaf2e9] text-[#376b4a]">
                     <Icon className="h-5 w-5" strokeWidth={1.5} />
                   </div>
                   <div>
-                    <h3 className="text-sm font-semibold text-[#39252d]">{note.title}</h3>
-                    <p className="mt-1 max-w-lg text-sm leading-6 text-[#78656c]">{note.text}</p>
+                    <h3 className="text-sm font-semibold text-[#253b2d]">{note.title}</h3>
+                    <p className="mt-1 max-w-lg text-sm leading-6 text-[#65776a]">{note.text}</p>
                   </div>
                 </div>
               );
@@ -438,7 +438,7 @@ function Index() {
           </div>
           <Link
             to="/about"
-            className="mt-8 inline-flex items-center gap-3 rounded-full border border-[#63283c] px-6 py-3 text-xs font-semibold uppercase tracking-[0.13em] text-[#63283c] transition hover:bg-[#63283c] hover:text-white"
+            className="mt-8 inline-flex items-center gap-3 rounded-full border border-[#24543a] px-6 py-3 text-xs font-semibold uppercase tracking-[0.13em] text-[#24543a] transition hover:bg-[#24543a] hover:text-white"
           >
             Discover our story <ArrowRight className="h-4 w-4" />
           </Link>
@@ -446,10 +446,10 @@ function Index() {
       </section>
 
       {/* Style assistance / WhatsApp */}
-      <section className="bg-[#63283c] text-white">
+      <section className="bg-[#24543a] text-white">
         <div className="mx-auto flex max-w-7xl flex-col gap-6 px-5 py-10 sm:px-8 md:flex-row md:items-center md:justify-between md:py-12 lg:px-12">
           <div className="max-w-2xl">
-            <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#e4bdba]">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.25em] text-[#c6d8c7]">
               Need a little help?
             </p>
             <h2 className="mt-2 text-2xl font-medium sm:text-3xl">
@@ -463,7 +463,7 @@ function Index() {
             href="https://wa.me/919044466957?text=Hello%20IHS%2C%20I%20need%20help%20with%20a%20product."
             target="_blank"
             rel="noreferrer"
-            className="inline-flex min-h-12 shrink-0 items-center justify-center gap-3 rounded-full bg-[#fff9f6] px-6 text-xs font-semibold uppercase tracking-[0.13em] text-[#63283c] transition hover:bg-white"
+            className="inline-flex min-h-12 shrink-0 items-center justify-center gap-3 rounded-full bg-[#f9fcf8] px-6 text-xs font-semibold uppercase tracking-[0.13em] text-[#24543a] transition hover:bg-white"
           >
             Chat with us on WhatsApp <ArrowUpRight className="h-4 w-4" />
           </a>
@@ -471,15 +471,15 @@ function Index() {
       </section>
 
       {/* Newsletter */}
-      <section className="bg-[#fffdfb] px-4 py-16 sm:py-20">
+      <section className="bg-[#fbfdf9] px-4 py-16 sm:py-20">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[#9c5263]">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.26em] text-[#467a58]">
             A note from the atelier
           </p>
-          <h2 className="mt-3 text-3xl font-medium tracking-[-0.04em] text-[#321f28] sm:text-4xl">
+          <h2 className="mt-3 text-3xl font-medium tracking-[-0.04em] text-[#203b2d] sm:text-4xl">
             New arrivals, delivered thoughtfully.
           </h2>
-          <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-[#78656c]">
+          <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-[#65776a]">
             Join the IHS list for collection news, styling ideas and occasional offers.
           </p>
           <form
@@ -496,17 +496,17 @@ function Index() {
               }
               placeholder="Your email address"
               required
-              className="min-h-12 min-w-0 flex-1 rounded-full border border-[#e4d5cf] bg-white px-5 text-sm text-[#39252d] outline-none placeholder:text-[#aa999d] focus:border-[#9c5263]"
+              className="min-h-12 min-w-0 flex-1 rounded-full border border-[#dbe7dc] bg-white px-5 text-sm text-[#253b2d] outline-none placeholder:text-[#77897c] focus:border-[#467a58]"
             />
             <button
               type="submit"
               disabled={news.sending}
-              className="min-h-12 rounded-full bg-[#63283c] px-6 text-xs font-semibold uppercase tracking-[0.13em] text-white transition hover:bg-[#421a2a] disabled:opacity-60"
+              className="min-h-12 rounded-full bg-[#24543a] px-6 text-xs font-semibold uppercase tracking-[0.13em] text-white transition hover:bg-[#173b29] disabled:opacity-60"
             >
               {news.sending ? "Joining…" : news.sent ? "You're on the list" : "Join the list"}
             </button>
           </form>
-          <p className="mt-3 text-[10px] text-[#97868b]">
+          <p className="mt-3 text-[10px] text-[#718274]">
             Thoughtful updates only. You can unsubscribe whenever you like.
           </p>
         </div>
