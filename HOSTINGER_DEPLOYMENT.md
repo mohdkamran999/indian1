@@ -1,62 +1,44 @@
-# Hostinger Node.js deployment — Indian Handicraft Standards
+# Hostinger Node.js deployment
 
-This repository workflow builds and packages the app; it does **not** automatically deploy to Hostinger.
+Use this when deploying the GitHub repo to Hostinger while continuing to edit in Lovable.
 
 ## Hostinger settings
 
-- **Node version:** 22.12 or newer
-- **Install command:** `npm install --no-audit --no-fund`
+- **Node version:** `22.x` or newer
+- **Install command:** `npm install`
 - **Build command:** `npm run build:hostinger`
 - **Start command:** `npm run start:hostinger`
-- **Startup / Entry file:** `hostinger-server.mjs`
-- **Build output:** `dist/` (the server entry is expected at `dist/server/index.mjs`)
+- **Startup file / Entry file:** `hostinger-server.mjs`
+- **Output directory:** `dist`
 
-## Downloadable deployment package
+## Vercel settings (alternative)
 
-After a successful GitHub Actions run named **Hostinger build verification**:
+If deploying to Vercel instead of Hostinger:
 
-1. Open the run at https://github.com/mohdkamran999/indian1/actions.
-2. In the run's **Artifacts** section, download `ihs-hostinger-<commit>`.
-3. The artifact contains a tested `dist/` build and a full-source archive named `ihs-hostinger-source.zip`.
-4. **Recommended for the live site:** use the source archive. Extract `ihs-hostinger-source.zip` into the Hostinger Node.js app root. This lets the production bundle be rebuilt using the existing Supabase values configured in Hostinger. Do not deploy a prebuilt `dist/` without confirming that the browser-side Vite variables were included.
-5. In the app root, run `npm install --no-audit --no-fund`, then run `npm run build:hostinger` after setting the environment variables below.
-6. Set the entry/start file to `hostinger-server.mjs` (equivalent start command: `npm run start:hostinger`), then restart the app.
-
-The artifact is retained for 14 days. GitHub verifies compilation and packaging, not the live Hostinger deployment.
+- **Framework preset:** `Vite` (or leave as default)
+- **Build command:** `npm run build:vercel`
+- **Output directory:** `.output`
+- **Install command:** `npm install`
 
 ## Required environment variables
 
-Set the matching values for the existing Supabase project in Hostinger **before building**:
+Add these before building:
 
 - `SUPABASE_URL`
 - `SUPABASE_PUBLISHABLE_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY` (required for checkout, order tracking, coupon validation, and trusted server-side order/payment operations; obtain it from the owner of the existing Supabase project)
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_PUBLISHABLE_KEY`
+- `HOSTINGER=1` (only for Hostinger builds)
+- `NITRO_PRESET=node-server` (only for Hostinger builds)
 
-The Vite-prefixed values are needed during the build for browser-side Supabase access. Use only the public project URL and publishable/anon key in `VITE_*` variables. Do not create a new Supabase project just for deployment.
+Admin-only backend actions also need `SUPABASE_SERVICE_ROLE_KEY`. If that secret is not available on your external host, storefront product listing will still work, but admin write operations should be managed from Lovable.
 
-`SUPABASE_SERVICE_ROLE_KEY` is required by the current server-side order and payment code. If the developer who owns the Supabase project has not granted access, ask them to set this private variable in Hostinger or grant you authorized access to the existing project. Do not create a replacement database to work around this. Set the key only as a private server-side environment variable; never expose it in client-side `VITE_*` variables, browser code, or GitHub files. Never commit database passwords, Hostinger credentials, or verification codes.
+## Why 403 happens (Hostinger)
 
-## Safe rollout and checks
+Hostinger shows 403 when the domain points to `public_html` instead of the Node app, when the generated `.htaccess` is stale, or when the Node app never starts. This repo must be built first with `npm run build:hostinger`, then started from `hostinger-server.mjs`.
 
-1. Back up the current website files and database before replacing any live files. Do not delete the existing database or catalogue.
-2. Upload/extract the source archive into the Node app root, configure the environment variables, install dependencies, and build.
-3. Restart the app and test in a private/incognito browser window:
-   - https://indianhandicraftstandards.com/
-   - https://indianhandicraftstandards.com/shop
-   - a product detail page, cart, and checkout flow
-4. Confirm published IHS products, prices, stock, admin access, and existing orders remain correct.
+If 403 still appears after a successful build, open Hostinger **Node.js App → Settings & Redeploy**, set **Entry file** to `hostinger-server.mjs`, then redeploy/restart so Hostinger regenerates `public_html/.htaccess`.
 
-Production storefront code now avoids presenting static sample products as real inventory. If the database connection or published catalogue is unavailable, the shop can appear empty; verify the existing Supabase project connection and published products. No database records should be deleted as part of deployment.
+## GitHub sync flow
 
-## Known Hostinger 403 check
-
-If Hostinger shows 403, confirm the domain is attached to the Node.js app rather than only `public_html`, the app starts successfully, and the entry file is `hostinger-server.mjs`. If necessary, use Hostinger **Node.js App → Settings & Redeploy** and restart/redeploy so Hostinger refreshes its generated routing configuration.
-
-## Status
-
-- Storefront environment-resolution code is merged.
-- GitHub Actions successfully built the app and produced a deployment artifact before the source-archive enhancement.
-- Hostinger's deployment page has shown the latest `main` commit as Completed/Current, and the live shop has been observed rendering products. Checkout is not fully verified until `SUPABASE_SERVICE_ROLE_KEY` is configured and a safe end-to-end test can be completed.
-- The GitHub workflow validates build and packaging; it does not validate the live checkout or external Meta/Google account approvals.
+Lovable edits sync to GitHub. Your hosting platform must then pull the latest GitHub commit and run the build/start commands above. If auto-deploy is enabled, every synced commit can go live automatically.
