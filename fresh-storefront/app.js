@@ -26,24 +26,28 @@ http.createServer((req, res) => {
   const pathname = new URL(req.url, "http://localhost").pathname;
 
   if (pathname === "/config.js") {
-    const projectUrl = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || "https://uscsoscckihhlmiwzqny.supabase.co";
-    const publishableKey = process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || "";
-    const projectId = process.env.SUPABASE_PROJECT_ID || process.env.VITE_SUPABASE_PROJECT_ID || "uscsoscckihhlmiwzqny";
-    const whatsappNumber = process.env.IHS_WHATSAPP_NUMBER || "";
+    let saved = {};
+    try {
+      saved = JSON.parse(fs.readFileSync(path.join(ROOT, "ihs-runtime-config.json"), "utf8"));
+    } catch {}
+    const projectId = process.env.SUPABASE_PROJECT_ID || process.env.VITE_SUPABASE_PROJECT_ID || saved.supabaseProjectId || "uscsoscckihhlmiwzqny";
     const config = {
-      supabaseUrl: projectUrl,
-      supabasePublishableKey: publishableKey,
+      supabaseUrl: process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || saved.supabaseUrl || "https://" + projectId + ".supabase.co",
+      supabasePublishableKey: process.env.SUPABASE_PUBLISHABLE_KEY || process.env.VITE_SUPABASE_PUBLISHABLE_KEY || saved.supabasePublishableKey || "",
       supabaseProjectId: projectId,
-      whatsappNumber
+      whatsappNumber: process.env.IHS_WHATSAPP_NUMBER || saved.whatsappNumber || ""
     };
     return send(res, 200, "window.IHS_CONFIG = " + JSON.stringify(config) + ";\n", "text/javascript; charset=utf-8");
   }
 
-  let relative = pathname === "/" ? "index.html" : decodeURIComponent(pathname).replace(/^\/+/, "");
-  const resolved = path.resolve(ROOT, relative);
-  if (resolved !== ROOT && !resolved.startsWith(ROOT + path.sep)) {
-    return send(res, 403, "Forbidden");
+  let relative;
+  try {
+    relative = pathname === "/" ? "index.html" : decodeURIComponent(pathname).replace(/^\/+/, "");
+  } catch {
+    return send(res, 400, "Invalid path");
   }
+  const resolved = path.resolve(ROOT, relative);
+  if (resolved !== ROOT && !resolved.startsWith(ROOT + path.sep)) return send(res, 403, "Forbidden");
 
   fs.stat(resolved, (err, stat) => {
     if (err || !stat.isFile()) return send(res, 404, "Page not found");
@@ -52,5 +56,5 @@ http.createServer((req, res) => {
     fs.createReadStream(resolved).pipe(res);
   });
 }).listen(PORT, "0.0.0.0", () => {
-  console.log("IHS green storefront server listening on port " + PORT);
+  console.log("IHS storefront server listening on port " + PORT);
 });
