@@ -1,0 +1,13 @@
+{
+  "name": "ihs-green-storefront",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node build-check.js",
+    "start": "node app.js"
+  }
+}
