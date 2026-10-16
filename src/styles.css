@@ -84,7 +84,7 @@
   --muted: oklch(0.95 0.012 20);
   --muted-foreground: oklch(0.48 0.025 155);
   --accent: oklch(0.72 0.13 75);                  /* antique gold */
-  --accent-foreground: oklch(0.99 0.006 48);
+  --accent-foreground: oklch(0.22 0.025 155);
   --destructive: oklch(0.55 0.22 27);
   --destructive-foreground: oklch(0.98 0.01 80);
   --border: oklch(0.9 0.018 150);
